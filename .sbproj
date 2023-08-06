@@ -1,0 +1,136 @@
+{
+  "Title": "Spleef",
+  "Type": "game",
+  "Org": "local",
+  "Ident": "spleef",
+  "Tags": null,
+  "Schema": 1,
+  "HasAssets": true,
+  "AssetsPath": "",
+  "Resources": null,
+  "MenuResources": null,
+  "HasCode": true,
+  "CodePath": "/code/",
+  "PackageReferences": [
+    "rust.pallet_boxes_a"
+  ],
+  "EditorReferences": null,
+  "Metadata": {
+    "MaxPlayers": 16,
+    "MinPlayers": 1,
+    "GameNetworkType": "Multiplayer",
+    "MapSelect": "Unrestricted",
+    "MapList": [
+      "facepunch.square"
+    ],
+    "RankType": "None",
+    "PerMapRanking": false,
+    "LeaderboardType": "None",
+    "GameCategory": "TechDemos",
+    "ProjectTemplate": null,
+    "CsProjName": "",
+    "HttpAllowList": null,
+    "SavedGames": true,
+    "MapDependentSaves": false,
+    "SaveFormatVersion": 1001,
+    "TickRate": 50,
+    "LaunchConfigs": [
+      {
+        "Name": "Spleef",
+        "GameIdent": "local.spleef#local",
+        "MapName": "facepunch.flatgrass",
+        "MaxPlayers": 3,
+        "GameSettings": {},
+        "Addons": "thedimin.spleef",
+        "PreLaunchCommand": "allowlocalhttp;sv_lan",
+        "PostLaunchCommand": ""
+      }
+    ],
+    "ControlModes": {},
+    "InputSettings": {
+      "Actions": [
+        {
+          "Name": "Forward",
+          "KeyboardCode": "R",
+          "GroupName": "Movement"
+        },
+        {
+          "Name": "Backward",
+          "KeyboardCode": "S",
+          "GroupName": "Movement"
+        },
+        {
+          "Name": "Left",
+          "KeyboardCode": "A",
+          "GroupName": "Movement"
+        },
+        {
+          "Name": "Right",
+          "KeyboardCode": "D",
+          "GroupName": "Movement"
+        },
+        {
+          "Name": "Jump",
+          "KeyboardCode": "space",
+          "GamepadCode": "A",
+          "GroupName": "Movement"
+        },
+        {
+          "Name": "Run",
+          "KeyboardCode": "shift",
+          "GamepadCode": "LeftJoystickButton",
+          "GroupName": "Movement"
+        },
+        {
+          "Name": "Voice",
+          "KeyboardCode": "v",
+          "GamepadCode": "RightJoystickButton",
+          "GroupName": "Other"
+        },
+        {
+          "Name": "Score",
+          "KeyboardCode": "tab",
+          "GamepadCode": "SwitchLeftMenu",
+          "GroupName": "Other"
+        },
+        {
+          "Name": "Menu",
+          "KeyboardCode": "Q",
+          "GamepadCode": "SwitchRightMenu",
+          "GroupName": "Other"
+        },
+        {
+          "Name": "Chat",
+          "KeyboardCode": "T",
+          "GroupName": "Other"
+        },
+        {
+          "Name": "Use",
+          "KeyboardCode": "Mouse1",
+          "GamepadCode": "RightTrigger",
+          "GroupName": "Actions"
+        }
+      ]
+    },
+    "Compiler": {
+      "RootNamespace": "Spleef",
+      "DefineConstants": "SANDBOX;ADDON;DEBUG",
+      "NoWarn": "1701;1702;1591;",
+      "References": [],
+      "DistinctReferences": []
+    },
+    "PackageSettings": [
+      {
+        "DisplayType": "Integer",
+        "Choices": [],
+        "ConVarName": "MinPlayers",
+        "DisplayName": "Minimal players",
+        "DefaultValue": "0",
+        "Description": "",
+        "Group": "",
+        "Minimum": 2,
+        "Maximum": 10
+      }
+    ]
+  }
+}

@@ -1,0 +1,82 @@
+@using Sandbox;
+@using Sandbox.UI;
+@using Spleef;
+@using System;
+
+@namespace MyGame
+@inherits RootPanel
+@attribute [StyleSheet]
+
+<root>
+	<ChatBox />
+	<VoiceList />
+
+	<div class="header">
+		<h1>@SpleefGame.Instance.RoundInfo.ToString()</h1>
+		@if (SpleefGame.Instance.RoundInfo is WinnerRound wr)
+		{
+			<label> @WinnerName() Won! </label>
+			<label class="subtitle"> Next round will start in @wr.countdownFinished.Relative.ToString("0") </label>
+		}
+		else if (SpleefGame.Instance.RoundInfo is CountDownRound cr)
+		{
+			<label style="font-size:@TextScalar();"> @PrettyCountdown() </label>
+		}
+		else if (SpleefGame.Instance.RoundInfo is PlayingRound pr)
+		{
+		}
+		else if (SpleefGame.Instance.RoundInfo is LobbyRound lr)
+		{
+			<label> Waiting for players </label>
+			<subtitle> @GetCurrentPlayerCount() / @LobbyRound.RequiredPlayerCount </subtitle>
+		}
+	</div>
+
+	@if (SpleefGame.Instance.RoundInfo is PlayingRound)
+	{
+		<span class="crosshair"></span>
+	}
+
+</root>
+
+@code
+{
+	int GetCurrentPlayerCount()
+	{
+		return Game.Clients.Count;
+	}
+
+	string TextScalar()
+	{
+		//This is bad function but it works
+		float l = (1.0f).LerpTo(3, ((CountDownRound)SpleefGame.Instance.RoundInfo).countdownFinished.Relative / 3.0f);
+		return $"{l * 40}px";
+	}
+
+	string PrettyCountdown()
+	{
+		int value = (int)Math.Max(((CountDownRound)SpleefGame.Instance.RoundInfo).countdownFinished.Relative, 0);
+
+		if (value <= 0)
+			return "FIGHT !";
+
+		return value.ToString();
+	}
+
+	protected string WinnerName()
+	{
+		return ((WinnerRound)SpleefGame.Instance.RoundInfo).WinningClient.Name;
+	}
+
+	protected override int BuildHash()
+	{
+		return HashCode.Combine(Time.Delta);///
+		/*
+		if (SpleefGame.Current.RoundInfo is CountDownRound cr)
+		{
+			return HashCode.Combine(cr.countdownFinished.Relative);
+		}
+
+		return HashCode.Combine(SpleefGame.Current.RoundInfo);*/
+	}
+}

@@ -1,0 +1,36 @@
+Hud {
+    .header {
+        left: 50%;
+        transform: translateX(-50%);
+        top: 80px;
+        flex-direction: column;
+        position: absolute;
+        gap: 5px;
+        align-items: center;
+
+        label {
+            font-family: Roboto;
+            color: white;
+            font-size: 40px;
+            color: white;
+            text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+
+            &.subtitle {
+                font-size: 25px;
+            }
+        }
+    }
+
+    .crosshair {
+        left: 50%;
+        top: 50%;
+        transform: translate(50%,50%);
+        height: 15px;
+        width: 15px;
+        border-color: black;
+        border-width: 2px;
+        background-color: white;
+        border-radius: 100%;
+        position: absolute;
+    }
+}

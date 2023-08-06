@@ -1,0 +1,57 @@
+{
+  "SchemaVersion": 1,
+  "Name": null,
+  "Description": null,
+  "Root": {
+    "Guid": "7d401bff-2041-42a4-a135-b8c39ddf609d",
+    "Class": "Platform",
+    "Entities": [],
+    "Components": [
+      {
+        "Guid": "d8df1449-b099-47a9-bef5-f842031aa6ff",
+        "Class": "ModelPhysicsComponent",
+        "Keys": {
+          "GravityEnabled": {
+            "Type": "Boolean",
+            "Value": "true"
+          },
+          "_name": {
+            "Value": "\u0022ModelPhysicsComponent\u0022"
+          },
+          "_tags": {
+            "Value": "[]"
+          },
+          "Keyframe": {
+            "Type": "Boolean",
+            "Value": "true"
+          }
+        }
+      }
+    ],
+    "Keys": {
+      "_name": {
+        "Value": "\u0022Root Entity\u0022"
+      },
+      "_localposition": {
+        "Value": "\u00220,0,0\u0022"
+      },
+      "_localrotation": {
+        "Value": "\u00220,0,0\u0022"
+      },
+      "_scale": {
+        "Value": "1"
+      },
+      "_tags": {
+        "Value": "\u0022\u0022"
+      },
+      "Model": {
+        "Type": "Model",
+        "Value": "\u0022models/rust_props/wooden_pallets/pallet_boxes_a.vmdl\u0022"
+      },
+      "DestroyTimer": {
+        "Type": "Single",
+        "Value": "0.4"
+      }
+    }
+  }
+}
