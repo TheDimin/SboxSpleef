@@ -3,13 +3,13 @@ using Sandbox;
 using Spleef;
 using System;
 using System.Linq;
-using MyGame;
 using System.Collections.Generic;
 
 //
 // You don't need to put things in a namespace, but it doesn't hurt.
 //
 namespace Spleef;
+
 
 /// <summary>
 /// This is your game class. This is an entity that is created serverside when

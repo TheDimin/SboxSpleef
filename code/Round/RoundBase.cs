@@ -1,5 +1,4 @@
-﻿using MyGame;
-using Sandbox;
+﻿using Sandbox;
 using Sandbox.UI.Tests;
 using System;
 using System.Collections.Generic;

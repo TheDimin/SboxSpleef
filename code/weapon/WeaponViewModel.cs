@@ -1,6 +1,6 @@
 using Sandbox;
 
-namespace MyGame;
+namespace Spleef;
 
 public partial class WeaponViewModel : BaseViewModel
 {

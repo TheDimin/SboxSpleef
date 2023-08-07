@@ -1,10 +1,9 @@
-﻿using Sandbox;
+using Sandbox;
 using Sandbox.Component;
 using Sandbox.Internal.Globals;
-using Spleef;
 using System.ComponentModel;
 
-namespace MyGame;
+namespace Spleef;
 
 public partial class Pawn : AnimatedEntity
 {
