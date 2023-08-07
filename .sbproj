@@ -1,7 +1,7 @@
 {
   "Title": "Spleef",
   "Type": "game",
-  "Org": "local",
+  "Org": "thedimin",
   "Ident": "spleef",
   "Tags": null,
   "Schema": 1,
@@ -36,12 +36,12 @@
     "TickRate": 50,
     "LaunchConfigs": [
       {
-        "Name": "Spleef",
-        "GameIdent": "local.spleef#local",
+        "Name": "SpleefMP",
+        "GameIdent": "thedimin.spleef#local",
         "MapName": "facepunch.flatgrass",
         "MaxPlayers": 3,
         "GameSettings": {},
-        "Addons": "thedimin.spleef",
+        "Addons": "",
         "PreLaunchCommand": "allowlocalhttp;sv_lan",
         "PostLaunchCommand": ""
       }
@@ -131,6 +131,7 @@
         "Minimum": 2,
         "Maximum": 10
       }
-    ]
+    ],
+    "ParentPackage": ""
   }
 }
