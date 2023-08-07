@@ -48,7 +48,8 @@ namespace Spleef
 			base.OnStateEnter();
 			foreach ( var client in Game.Clients )
 			{
-				AliveClients.Add( client );
+				if ( client.Pawn != null ) //In a rare case the client is Connected but hasn't spawned in yet. Ignore those...
+					AliveClients.Add( client );
 			}
 		}
 

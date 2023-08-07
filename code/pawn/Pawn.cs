@@ -1,11 +1,16 @@
-using Sandbox;
+﻿using Sandbox;
 using Sandbox.Component;
 using Sandbox.Internal.Globals;
 using System.ComponentModel;
 
 namespace Spleef;
 
-public partial class Pawn : AnimatedEntity
+public interface NamePlatePosition
+{
+	public abstract Vector3 GetNamePlateLocalOffset();
+}
+
+public partial class Pawn : AnimatedEntity,NamePlatePosition
 {
 	[ClientInput]
 	public Vector3 InputDirection { get; set; }
@@ -58,6 +63,8 @@ public partial class Pawn : AnimatedEntity
 	[BindComponent] public PawnAnimator Animator { get; }
 	[BindComponent] public SpleefPlayerComponent spleefPlayerComponent { get; }
 
+	public NamePlate namePlate { get; private set; }
+
 	public override Ray AimRay => new Ray( EyePosition, EyeRotation.Forward );
 
 	/// <summary>
@@ -70,6 +77,19 @@ public partial class Pawn : AnimatedEntity
 		EnableDrawing = true;
 		EnableHideInFirstPerson = true;
 		EnableShadowInFirstPerson = true;
+	}
+
+	public override void ClientSpawn()
+	{
+		namePlate = new NamePlate(Client );
+		Log.Warning( "eyy client spawn called" );
+	}
+
+	protected override void OnDestroy()
+	{
+		base.OnDestroy();
+		if ( Game.IsClient )
+			namePlate.Delete();
 	}
 
 	public void Respawn()
@@ -250,5 +270,10 @@ public partial class Pawn : AnimatedEntity
 		if ( !IsValidUseEntity( ent ) ) return null;
 
 		return ent;
+	}
+
+	public Vector3 GetNamePlateLocalOffset()
+	{
+		return EyeLocalPosition + Vector3.Up * 15f;
 	}
 }

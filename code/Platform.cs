@@ -18,7 +18,8 @@ namespace Spleef
 	}
 
 
-	[Prefab, HammerEntity, Library( "thedimin_spleef" ),]
+	[Prefab, HammerEntity, Library( "thedimin_spleef" )]
+	[Title("Spleef Platform"),Category("Spleef"),Icon("place")]
 	public partial class Platform : ModelEntity, IUse
 	{
 		[Prefab] public float DestroyTimer { get; set; } = .01f;

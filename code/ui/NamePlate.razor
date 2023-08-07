@@ -1,0 +1,55 @@
+﻿@using Sandbox;
+@using Sandbox.UI;
+@using System;
+
+@namespace Spleef
+@inherits WorldPanel
+@attribute [StyleSheet]
+
+<root>
+	<div class="Background">
+		<img class="SteamAvatar" src="avatar:@client.SteamId" />
+		<p class="Text">@client.Name</p>
+		@if (client.Voice.LastHeard < 2)
+		{
+			<img class="SpeakerIcon" src="https://cdn-icons-png.flaticon.com/512/2/2384.png" />
+		}
+	</div>
+</root>
+
+@code
+{
+	public IClient client { get; set; }
+	public NamePlate(IClient Client)
+	{
+		client = Client;
+	}
+	protected override int BuildHash()
+	{
+		return HashCode.Combine(Time.Delta);
+		//return HashCode.Combine(client.Pawn?.Transform);
+	}
+
+	public override void Tick()
+	{
+		base.Tick();
+		WorldScale = 1f;
+
+		if (Camera.Main == null)
+			Log.Error("Invalid Camera?");
+
+		if (!(client.Pawn is NamePlatePosition))
+		{
+			//TODO allow this to be a component attached to the player
+			Log.Error("Pawn does not implement 'NamePlatePosition' Interface.....");
+			return;
+		}
+
+		Vector3 pt = Camera.Position - Position;
+		Rotation lookRotation = Rotation.LookAt(pt);
+
+		Rotation = lookRotation;
+
+		Position = client.Pawn.Position + ((NamePlatePosition)client.Pawn).GetNamePlateLocalOffset();
+	}
+}
