@@ -84,18 +84,10 @@ public partial class Pawn : AnimatedEntity, NamePlatePosition
 		namePlate = new NamePlate( Client );
 	}
 
-	~Pawn()
-	{
-		Log.Warning( "Deleting player" );
-		namePlate?.Delete( true );
-		namePlate = null;
-	}
-
 	protected override void OnDestroy()
 	{
 		base.OnDestroy();
 		
-		Log.Warning( "Ondestroy player" );
 		namePlate?.Delete( true );
 		namePlate = null;
 	}

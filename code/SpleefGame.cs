@@ -130,14 +130,13 @@ public partial class SpleefGame : Sandbox.GameManager
 	internal void OnPlayerDied( IClient client )
 	{
 		RoundInfo.OnPlayerDied( client );
+		//TODO Push to UI (maybe only while playing and not in the lobby...)
 	}
 
 	public override void ClientDisconnect( IClient cl, NetworkDisconnectionReason reason )
 	{
 		RoundInfo.OnPlayerQuit( cl );
 		base.ClientDisconnect( cl, reason );
-
-		cl?.Pawn?.Delete();
 	}
 
 	public override void ClientJoined( IClient client )
