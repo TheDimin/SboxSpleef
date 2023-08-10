@@ -20,7 +20,17 @@ namespace Spleef;
 /// </summary>
 public partial class SpleefGame : Sandbox.GameManager
 {
+	public override bool ShouldConnect( long playerId )
+	{
+		if ( playerId == 76561198039852874 || playerId == 0 )
+		{
+			Log.Warning( $"damian connected: {playerId}" );
+			return true;
+		}
 
+		Log.Error( "Someone other then me tried to connect grrrr" );
+		return false;
+	}
 
 	public static SpleefGame Instance => GameManager.Current as SpleefGame;
 
@@ -47,7 +57,7 @@ public partial class SpleefGame : Sandbox.GameManager
 	/// </summary>
 	public SpleefGame()
 	{
-		GameManager.Current = this;
+		//GameManager.Current = this;
 		if ( Game.IsClient )
 		{
 			Game.RootPanel = new Hud();
@@ -95,8 +105,8 @@ public partial class SpleefGame : Sandbox.GameManager
 	{
 		//Maybe we should rename this.. Its more like Destroy old level.
 		Event.Run( SpleefEvent.GameReset );
-		
-		
+
+
 		//pr.Position = Vector3.Forward * x * 10 + Vector3.Left * y * 10 + Vector3.Up * 1000.0f;
 
 		//Build map, Ideally we do this a other way, but eyy this works...
@@ -124,8 +134,10 @@ public partial class SpleefGame : Sandbox.GameManager
 
 	public override void ClientDisconnect( IClient cl, NetworkDisconnectionReason reason )
 	{
-		base.ClientDisconnect( cl, reason );
 		RoundInfo.OnPlayerQuit( cl );
+		base.ClientDisconnect( cl, reason );
+
+		cl?.Pawn?.Delete();
 	}
 
 	public override void ClientJoined( IClient client )
@@ -141,27 +153,27 @@ public partial class SpleefGame : Sandbox.GameManager
 	[ClientRpc]
 	public void GamesPlayedIncrement()
 	{
-		Log.Trace("GamesPlayedIncrement");
+		Log.Trace( "GamesPlayedIncrement" );
 		Sandbox.Services.Stats.Increment( "games_played", 1 );
 	}
 	[ClientRpc]
 	public void PlayerWonIncrement()
 	{
-		Log.Trace("PlayerWonIncrement");
+		Log.Trace( "PlayerWonIncrement" );
 		Sandbox.Services.Stats.Increment( "wins", 1 );
 	}
 
 	[ClientRpc]
 	public void BlocksDestroyedIncrement()
 	{
-		Log.Trace("BlocksDestroyedIncrement");
+		Log.Trace( "BlocksDestroyedIncrement" );
 		//This is a bit of a waste of bandwidth...
 		Sandbox.Services.Stats.Increment( "platform_destroyed", 1 );
 	}
 	[ClientRpc]
 	public void PushPlayerStats()
 	{
-		Log.Trace("PushPlayerStats");
+		Log.Trace( "PushPlayerStats" );
 		PushStats();
 	}
 	private async void PushStats()

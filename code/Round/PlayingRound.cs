@@ -24,7 +24,6 @@ namespace Spleef
 			base.OnPlayerQuit( client );
 
 			//Maybe we don't have to call this as we have to destroy the pawn anyway...
-
 			AliveClients.Remove( client );
 
 			WinnerCheck();

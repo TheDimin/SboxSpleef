@@ -10,7 +10,7 @@ public interface NamePlatePosition
 	public abstract Vector3 GetNamePlateLocalOffset();
 }
 
-public partial class Pawn : AnimatedEntity,NamePlatePosition
+public partial class Pawn : AnimatedEntity, NamePlatePosition
 {
 	[ClientInput]
 	public Vector3 InputDirection { get; set; }
@@ -81,15 +81,23 @@ public partial class Pawn : AnimatedEntity,NamePlatePosition
 
 	public override void ClientSpawn()
 	{
-		namePlate = new NamePlate(Client );
-		Log.Warning( "eyy client spawn called" );
+		namePlate = new NamePlate( Client );
+	}
+
+	~Pawn()
+	{
+		Log.Warning( "Deleting player" );
+		namePlate?.Delete( true );
+		namePlate = null;
 	}
 
 	protected override void OnDestroy()
 	{
 		base.OnDestroy();
-		if ( Game.IsClient )
-			namePlate.Delete();
+		
+		Log.Warning( "Ondestroy player" );
+		namePlate?.Delete( true );
+		namePlate = null;
 	}
 
 	public void Respawn()

@@ -35,6 +35,9 @@ namespace Spleef
 			{
 				if ( !(client.Pawn != null && client.Pawn.IsValid) )
 					SpawnPlayer( client );
+				else
+					//Prevent client from getting stuck in the ground.
+					client.Pawn.Position += Vector3.Up * 5;
 			}
 		}
 

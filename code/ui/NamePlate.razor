@@ -19,24 +19,55 @@
 
 @code
 {
-	public IClient client { get; set; }
+	public IClient client { get; private set; }
 	public NamePlate(IClient Client)
 	{
 		client = Client;
 	}
 	protected override int BuildHash()
 	{
-		return HashCode.Combine(Time.Delta);
-		//return HashCode.Combine(client.Pawn?.Transform);
+		if (client == null || !IsDeleting)
+			return base.BuildHash();
+
+		if (!(client.IsValid || client.Pawn.IsValid))
+			return base.BuildHash();
+
+		//return base.BuildHash()
+		return HashCode.Combine(client?.Pawn, client?.Voice.LastHeard);
+	}
+
+	public override void OnDeleted()
+	{
+		base.OnDeleted();
+		Log.Warning("OnDelete called....");
+		client = null;
 	}
 
 	public override void Tick()
 	{
+		if (IsDeleting || client == null)
+		{
+			Log.Warning("Tick on deleted object called");
+			return;
+		}
+
 		base.Tick();
 		WorldScale = 1f;
 
 		if (Camera.Main == null)
 			Log.Error("Invalid Camera?");
+
+
+		if (!client.IsValid)
+		{
+			return;
+		}
+		if (!client.Pawn.IsValid)
+
+		{
+			Log.Error("PAWN IS NOT VALID");
+			return;
+		}
 
 		if (!(client.Pawn is NamePlatePosition))
 		{
