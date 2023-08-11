@@ -92,6 +92,7 @@ public partial class SpleefGame : Sandbox.GameManager
 	[ConCmd.Server( "spleef_RestartGame" )]
 	public static void RestartGame()
 	{
+		Log.Warning( "test?" );
 		Instance.ChangeRound( new LobbyRound() );
 	}
 

@@ -20,14 +20,17 @@ namespace Spleef
 
 		public virtual void OnPlayerDied( IClient client ) { }
 
-		public virtual void OnStateEnter() { }
+		public virtual void OnStateEnter()
+		{
+			Log.Trace( $"[GAMESTATE] Enterd :{this.ClassName}" );
+		}
 		public virtual void OnStateExit() { }
 
 
 		protected virtual void SpawnPlayer( IClient client )
 		{
 			//Reset pawn if its already valid...
-			Log.Warning("Spawning player...");
+			Log.Warning( "Spawning player..." );
 			if ( client.Pawn != null )
 			{
 				client.Pawn.Delete();

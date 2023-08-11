@@ -12,6 +12,7 @@
 
 	<div class="header">
 		<h1>@SpleefGame.Instance.RoundInfo.ToString()</h1>
+
 		@if (SpleefGame.Instance.RoundInfo is WinnerRound wr)
 		{
 			<label> @WinnerName() Won! </label>
@@ -40,6 +41,7 @@
 
 @code
 {
+
 	int GetCurrentPlayerCount()
 	{
 		return Game.Clients.Count;
@@ -54,6 +56,7 @@
 
 	string PrettyCountdown()
 	{
+		Log.Trace(((CountDownRound)SpleefGame.Instance.RoundInfo).countdownFinished.Relative);
 		int value = (int)Math.Max(((CountDownRound)SpleefGame.Instance.RoundInfo).countdownFinished.Relative, 0);
 
 		if (value <= 0)
@@ -69,6 +72,8 @@
 
 	protected override int BuildHash()
 	{
+		//Log.Warning(SpleefGame.Instance.RoundInfo.GetType().Name);
+
 		return HashCode.Combine(Time.Delta);///
 		/*
 		if (SpleefGame.Current.RoundInfo is CountDownRound cr)

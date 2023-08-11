@@ -42,7 +42,7 @@
         "MaxPlayers": 3,
         "GameSettings": {},
         "Addons": "",
-        "PreLaunchCommand": "allowlocalhttp;sv_lan",
+        "PreLaunchCommand": "allowlocalhttp;sv_lan 1",
         "PostLaunchCommand": ""
       }
     ],

@@ -81,13 +81,16 @@ public partial class Pawn : AnimatedEntity, NamePlatePosition
 
 	public override void ClientSpawn()
 	{
+		if ( Client == Game.LocalClient )
+			return;
+
 		namePlate = new NamePlate( Client );
 	}
 
 	protected override void OnDestroy()
 	{
 		base.OnDestroy();
-		
+
 		namePlate?.Delete( true );
 		namePlate = null;
 	}

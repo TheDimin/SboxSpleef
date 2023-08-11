@@ -35,8 +35,9 @@ namespace Spleef
 			AliveClients.Remove( client );
 
 			client.Pawn.Delete();
-			SpleefGame.Current.DoPlayerDevCam( client );
+			client.Pawn = null;
 
+			SpleefGame.Current.DoPlayerDevCam( client );
 			WinnerCheck();
 		}
 

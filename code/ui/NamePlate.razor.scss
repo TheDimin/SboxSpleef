@@ -1,6 +1,6 @@
 ﻿NamePlate {
     .Background {
-        background-color: rgb(79, 79, 79, 1);
+        background-color: rgb(79, 79, 79, 0.45);
         border-radius: 10px;
         margin: auto;
         padding: 8px;
@@ -12,15 +12,15 @@
         border-radius: 10px;
     }
     .SpeakerIcon {
-        height: 60px;
-        width: 60px;
+        height:80px;
+        width: 80px;
         align-items: center;
         margin-left: 10px;
     }
 
     .Friend, .Text {
         font-family: Roboto;
-        color: black;
+        color: white;
         align-items: center;
         font-size: 60px;
         text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;

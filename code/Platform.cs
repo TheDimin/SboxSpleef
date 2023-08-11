@@ -26,7 +26,6 @@ namespace Spleef
 		public override void Spawn()
 		{
 			base.Spawn();
-			Log.Info( "Test" );
 		}
 
 		public bool IsUsable( Entity user )

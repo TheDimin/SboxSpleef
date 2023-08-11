@@ -14,6 +14,7 @@ namespace Spleef
 
 		public override void OnStateEnter()
 		{
+			base.OnStateEnter();
 			foreach ( IClient client in Game.Clients )
 			{
 				if ( client.Pawn == null )

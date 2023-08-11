@@ -9,8 +9,8 @@
 <root>
 	<div class="Background">
 		<img class="SteamAvatar" src="avatar:@client.SteamId" />
-		<p class="Text">@client.Name</p>
-		@if (client.Voice.LastHeard < 2)
+		<p class=@CSSFriendStatus()>@client.Name</p>
+		@if (client.Voice.LastHeard < .1f)
 		{
 			<img class="SpeakerIcon" src="https://cdn-icons-png.flaticon.com/512/2/2384.png" />
 		}
@@ -24,50 +24,30 @@
 	{
 		client = Client;
 	}
+
+	private string CSSFriendStatus()
+	{
+		return client.IsFriend ? "Friend" : "Text"; 
+	}
+
 	protected override int BuildHash()
 	{
+		return HashCode.Combine(Time.Delta);
 		if (client == null || !IsDeleting)
 			return base.BuildHash();
 
 		if (!(client.IsValid || client.Pawn.IsValid))
 			return base.BuildHash();
 
-		//return base.BuildHash()
 		return HashCode.Combine(client?.Pawn, client?.Voice.LastHeard);
-	}
-
-	public override void OnDeleted()
-	{
-		base.OnDeleted();
-		Log.Warning("OnDelete called....");
-		client = null;
 	}
 
 	public override void Tick()
 	{
-		if (IsDeleting || client == null)
-		{
-			Log.Warning("Tick on deleted object called");
-			return;
-		}
-
-		base.Tick();
 		WorldScale = 1f;
 
 		if (Camera.Main == null)
 			Log.Error("Invalid Camera?");
-
-
-		if (!client.IsValid)
-		{
-			return;
-		}
-		if (!client.Pawn.IsValid)
-
-		{
-			Log.Error("PAWN IS NOT VALID");
-			return;
-		}
 
 		if (!(client.Pawn is NamePlatePosition))
 		{

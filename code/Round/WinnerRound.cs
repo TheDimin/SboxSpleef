@@ -9,9 +9,9 @@ namespace Spleef
 {
 	internal partial class WinnerRound : LobbyRound
 	{
-		[ConVar.Replicated( "spleef_EndOfRoundTimer", Min = 0, Max = 30, Help = "Time in seconds we will stay in the WinnerGameState" )]
-		public static int EndOfRoundTime { get; set; } = 5;
-		[Net] public TimeUntil countdownFinished { get; private set; }
+		[ConVar.Replicated( "spleef_EndOfRoundTimer", Min = 3, Max = 30, Help = "Time in seconds we will stay in the WinnerGameState" )]
+		public static int EndOfRoundTime { get; set; } = 15;
+		[Net] public TimeUntil countdownFinished { get; private set; } = 999999;
 		[Net] internal IClient WinningClient { get; set; }
 		public WinnerRound( IClient winningClient )
 		{
@@ -23,10 +23,13 @@ namespace Spleef
 
 		public override void OnStateEnter()
 		{
+			//Important that countdown is set before Base.OnStateEnter 
+			// As it will call ExitConditionCheck which would pass as timer has not been set yet. 
+			countdownFinished = EndOfRoundTime;
+
 			base.OnStateEnter();
 
 			Event.Register( this );
-			countdownFinished = EndOfRoundTime;
 
 			SpleefGame.Instance.PushPlayerStats();
 			SpleefGame.Instance.BuildLevel();
