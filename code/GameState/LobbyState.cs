@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Spleef
 {
-	internal partial class LobbyRound : RoundBase
+	internal partial class LobbyState : GameStateBase
 	{
 		[ConVar.Replicated( "spleef_MinPlayerCount", Min = 2 )] public static int RequiredPlayerCount { get; set; } = 2;
 
@@ -41,7 +41,7 @@ namespace Spleef
 		public virtual void ExitConditionCheck()
 		{
 			if ( RequiredPlayerCount <= Game.Clients.Count )
-				SpleefGame.Instance.ChangeRound( new CountDownRound() );
+				SpleefGame.Instance.ChangeRound( new PrePlayCountdownState() );
 		}
 
 		public override void OnPlayerDied( IClient client )

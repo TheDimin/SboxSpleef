@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Spleef
 {
-	internal partial class CountDownRound : LobbyRound
+	internal partial class PrePlayCountdownState : LobbyState
 	{
 		[Net] public TimeUntil countdownFinished { get; private set; } = 999999;
 
@@ -33,7 +33,7 @@ namespace Spleef
 		{
 			if ( countdownFinished )
 			{
-				SpleefGame.Instance.ChangeRound( new PlayingRound() );
+				SpleefGame.Instance.ChangeRound( new PlayingState() );
 			}
 		}
 

@@ -30,7 +30,6 @@ namespace Spleef
 
 		public bool IsUsable( Entity user )
 		{
-			Log.Warning( "IsUsable" );
 			return true;
 		}
 

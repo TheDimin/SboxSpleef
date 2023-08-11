@@ -4,6 +4,8 @@ using Spleef;
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using Sandbox.Diagnostics;
 
 //
 // You don't need to put things in a namespace, but it doesn't hurt.
@@ -22,7 +24,7 @@ public partial class SpleefGame : Sandbox.GameManager
 {
 
 	//TEMP
-		public override bool ShouldConnect( long playerId )
+	public override bool ShouldConnect( long playerId )
 	{
 		if ( playerId == 76561198039852874 || playerId == 0 )
 		{
@@ -36,7 +38,7 @@ public partial class SpleefGame : Sandbox.GameManager
 
 	public static SpleefGame Instance => GameManager.Current as SpleefGame;
 
-	[Net] internal RoundBase RoundInfo { get; private set; }
+	[Net] internal GameStateBase gamestate { get; private set; }
 
 	//At some point we load this from maps instead of generation code..
 	#region LevelGeneration
@@ -46,10 +48,11 @@ public partial class SpleefGame : Sandbox.GameManager
 
 	static float HeightOffsetbetweenLayer = 300;
 	static float GroundOffset = 20000;
-	public static float KillZoneHeight { get; } = 19000;
+	public static float KillZoneHeight { get; } = 19800;
 
 	//Cheeky bounds finder, not valid till after a map is generated
 	[Net] private BBox bounds { get; set; }
+	[Net] private float elementScale { get; set; } = 1;
 	#endregion
 
 	/// <summary>
@@ -64,7 +67,7 @@ public partial class SpleefGame : Sandbox.GameManager
 		}
 
 		if ( Game.IsServer )
-			ChangeRound( new LobbyRound() );
+			ChangeRound( new LobbyState() );
 	}
 
 	~SpleefGame()
@@ -79,7 +82,7 @@ public partial class SpleefGame : Sandbox.GameManager
 	public static void RestartGame()
 	{
 		Log.Warning( "Spleef restart command issued" );
-		Instance.ChangeRound( new LobbyRound() );
+		Instance.ChangeRound( new LobbyState() );
 	}
 
 	public static Vector3 SpawnPosition
@@ -87,8 +90,8 @@ public partial class SpleefGame : Sandbox.GameManager
 		get
 		{
 			return ((Vector3.Forward * (LevelX * Instance.bounds.Size.x)) +// 
-			(Vector3.Left * (LevelY * Instance.bounds.Size.y))) * .5f +
-			Vector3.Up * (GroundOffset + LevelLayers * HeightOffsetbetweenLayer + 100);
+			(Vector3.Left * (LevelY * Instance.bounds.Size.y))) * Instance.elementScale * .5f +
+			Vector3.Up * (GroundOffset + LevelLayers * HeightOffsetbetweenLayer + Instance.bounds.Size.z * 0.5f);
 		}
 	}
 
@@ -113,15 +116,16 @@ public partial class SpleefGame : Sandbox.GameManager
 						continue;
 					}
 					bounds = pr.CollisionBounds;
-					pr.Position = Vector3.Forward * x * pr.CollisionBounds.Size.x
-						+ Vector3.Left * y * pr.CollisionBounds.Size.y;
+					elementScale = pr.Scale;
+					pr.Position = Vector3.Forward * x * pr.CollisionBounds.Size.x * elementScale
+						+ Vector3.Left * y * pr.CollisionBounds.Size.y * elementScale;
 					pr.Position += Vector3.Up * (GroundOffset + layer * HeightOffsetbetweenLayer);
 				}
 			}
 		}
 	}
 
-	internal void ChangeRound( RoundBase newRound )
+	internal void ChangeRound( GameStateBase newState )
 	{
 		if ( !Game.IsServer )
 		{
@@ -129,30 +133,30 @@ public partial class SpleefGame : Sandbox.GameManager
 			return;
 		}
 
-		RoundInfo?.OnStateExit();
+		gamestate?.OnStateExit();
 
-		RoundInfo = newRound;
-		RoundInfo.OnStateEnter();
+		gamestate = newState;
+		gamestate.OnStateEnter();
 	}
 
 	#region GameEvents
 	//Called on server when player died (Falled Of the map)
 	internal void OnPlayerDied( IClient client )
 	{
-		RoundInfo.OnPlayerDied( client );
+		gamestate.OnPlayerDied( client );
 		//TODO Push to UI (maybe only while playing and not in the lobby...)
 	}
 
 	public override void ClientDisconnect( IClient cl, NetworkDisconnectionReason reason )
 	{
-		RoundInfo.OnPlayerQuit( cl );
+		gamestate.OnPlayerQuit( cl );
 
 		base.ClientDisconnect( cl, reason );
 	}
 
 	public override void ClientJoined( IClient client )
 	{
-		RoundInfo.OnPlayerJoin( client );
+		gamestate.OnPlayerJoin( client );
 
 		base.ClientJoined( client );
 	}
@@ -180,17 +184,47 @@ public partial class SpleefGame : Sandbox.GameManager
 		Sandbox.Services.Stats.Increment( "platform_destroyed", 1 );
 	}
 	[ClientRpc]
-	public void PushPlayerStats()
+	public static void PushPlayerStats()
 	{
 		Log.Trace( "PushPlayerStats" );
 		PushStats();
 	}
-	private async void PushStats()
+	private static async void PushStats()
 	{
 		await Sandbox.Services.Stats.FlushAsync();
 
 		await Sandbox.Services.Stats.LocalPlayer.Refresh();
 	}
 	#endregion
+
+
+	public virtual SpectatorComponent MakeSpectator( IClient client, Vector3 pos, Rotation rotation )
+	{
+		Game.AssertServer();
+
+		client.Pawn?.Delete();
+		client.Pawn = null;
+
+		var camera = client.Components.Get<SpectatorComponent>( true );
+
+		if ( camera == null )
+		{
+			camera = new SpectatorComponent();
+			client.Components.Add( camera );
+
+			camera.SetPosition(pos);
+			//camera.TargetPos = pos;
+			//camera.TargetRot = rotation;
+
+			return camera;
+		}
+
+		camera.Enabled = !camera.Enabled;
+		camera.SetPosition(pos);
+		//camera.TargetPos = pos;
+		//camera.TargetRot = rotation;
+
+		return camera;
+	}
 }
 

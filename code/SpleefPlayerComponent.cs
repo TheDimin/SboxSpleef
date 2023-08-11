@@ -21,7 +21,7 @@ namespace Spleef
 		{
 			if ( SpleefGame.Instance != null )
 			{
-				if ( !SpleefGame.Instance.RoundInfo.CanDestroyBlocks ) return;
+				if ( !SpleefGame.Instance.gamestate.CanDestroyBlocks ) return;
 			}
 			else
 			{

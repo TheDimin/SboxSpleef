@@ -13,26 +13,26 @@
 	<div class="header">
 		<!--<h1>@SpleefGame.Instance.RoundInfo.ToString()</h1>-->
 
-		@if (SpleefGame.Instance.RoundInfo is WinnerRound wr)
+		@if (SpleefGame.Instance.gamestate is WinnerState wr)
 		{
 			<label> @WinnerName() Won! </label>
 			<label class="subtitle"> Next round will start in @wr.countdownFinished.Relative.ToString("0") </label>
 		}
-		else if (SpleefGame.Instance.RoundInfo is CountDownRound cr)
+		else if (SpleefGame.Instance.gamestate is PrePlayCountdownState cr)
 		{
 			<label style="font-size:@TextScalar();"> @PrettyCountdown() </label>
 		}
-		else if (SpleefGame.Instance.RoundInfo is PlayingRound pr)
+		else if (SpleefGame.Instance.gamestate is PlayingState pr)
 		{
 		}
-		else if (SpleefGame.Instance.RoundInfo is LobbyRound lr)
+		else if (SpleefGame.Instance.gamestate is LobbyState lr)
 		{
 			<label> Waiting for players </label>
-			<label class="subtitle"> @GetCurrentPlayerCount() / @LobbyRound.RequiredPlayerCount </label>
+			<label class="subtitle"> @GetCurrentPlayerCount() / @LobbyState.RequiredPlayerCount </label>
 		}
 	</div>
 
-	@if (SpleefGame.Instance.RoundInfo is PlayingRound)
+	@if (SpleefGame.Instance.gamestate is PlayingState)
 	{
 		<span class="crosshair"></span>
 	}
@@ -41,7 +41,7 @@
 
 @code
 {
-
+	private GameStateBase gameState => SpleefGame.Instance.gamestate;
 	int GetCurrentPlayerCount()
 	{
 		return Game.Clients.Count;
@@ -50,14 +50,14 @@
 	string TextScalar()
 	{
 		//This is bad function but it works
-		float l = (1.0f).LerpTo(3, ((CountDownRound)SpleefGame.Instance.RoundInfo).countdownFinished.Relative / 3.0f);
+		float l = (1.0f).LerpTo(3, ((PrePlayCountdownState)gameState).countdownFinished.Relative / 3.0f);
 		return $"{l * 40}px";
 	}
 
 	string PrettyCountdown()
 	{
-		Log.Trace(((CountDownRound)SpleefGame.Instance.RoundInfo).countdownFinished.Relative);
-		int value = (int)Math.Max(((CountDownRound)SpleefGame.Instance.RoundInfo).countdownFinished.Relative, 0);
+		Log.Trace(((PrePlayCountdownState)gameState).countdownFinished.Relative);
+		int value = (int)Math.Max(((PrePlayCountdownState)gameState).countdownFinished.Relative, 0);
 
 		if (value <= 0)
 			return "FIGHT !";
@@ -67,7 +67,7 @@
 
 	protected string WinnerName()
 	{
-		return ((WinnerRound)SpleefGame.Instance.RoundInfo).WinningClient.Name;
+		return ((WinnerState)gameState).WinningClient.Name;
 	}
 
 	protected override int BuildHash()

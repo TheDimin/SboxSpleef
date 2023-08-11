@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Spleef
 {
-	internal partial class PlayingRound : RoundBase
+	internal partial class PlayingState : GameStateBase
 	{
 		public override bool CanDestroyBlocks => true;
 
@@ -53,7 +53,7 @@ namespace Spleef
 		{
 			if ( AliveClients.Count <= 1 )
 			{
-				SpleefGame.Instance.ChangeRound( new WinnerRound( AliveClients[0] ) );
+				SpleefGame.Instance.ChangeRound( new WinnerState( AliveClients[0] ) );
 			}
 		}
 	}
