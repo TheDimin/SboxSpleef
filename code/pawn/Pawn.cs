@@ -195,7 +195,7 @@ public partial class Pawn : AnimatedEntity, NamePlatePosition
 		{
 			Entity Using = null;
 
-			if ( Input.Down( "Use" ) )
+			if ( Input.Down( "Attack1" ) )
 			{
 				Using = FindUsable();
 
