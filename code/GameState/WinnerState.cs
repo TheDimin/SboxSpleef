@@ -18,7 +18,8 @@ namespace Spleef
 		{
 			WinningClient = winningClient;
 			Log.Warning( $"We got a winner: {winningClient}" );
-			SpleefGame.PlayerWonIncrement( To.Single( winningClient ) );
+
+			Sandbox.Services.Stats.Increment(winningClient, "games_won_v2", 1 );
 		}
 		public WinnerState() { }
 

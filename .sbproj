@@ -8,11 +8,11 @@
   "HasAssets": true,
   "AssetsPath": "",
   "Resources": null,
-  "MenuResources": null,
+  "MenuResources": "\nui/mainmenu/*",
   "HasCode": true,
   "CodePath": "/code/",
   "PackageReferences": [
-    "rust.pallet_boxes_a"
+    "andiq.crate"
   ],
   "EditorReferences": null,
   "Metadata": {

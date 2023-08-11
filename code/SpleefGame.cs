@@ -22,20 +22,6 @@ namespace Spleef;
 /// </summary>
 public partial class SpleefGame : Sandbox.GameManager
 {
-
-	//TEMP
-	public override bool ShouldConnect( long playerId )
-	{
-		if ( playerId == 76561198039852874 || playerId == 0 )
-		{
-			Log.Warning( $"damian connected: {playerId}" );
-			return true;
-		}
-
-		Log.Error( "Someone other then me tried to connect grrrr" );
-		return false;
-	}
-
 	public static SpleefGame Instance => GameManager.Current as SpleefGame;
 
 	[Net] internal GameStateBase gamestate { get; private set; }
@@ -164,25 +150,13 @@ public partial class SpleefGame : Sandbox.GameManager
 
 	#region Stats
 	[ClientRpc]
+	//All other stats are replicated differently, but this one has to be send to all clients so lets do it here for now.
 	public static void GamesPlayedIncrement()
 	{
 		Log.Trace( "GamesPlayedIncrement" );
-		Sandbox.Services.Stats.Increment( "games_played", 1 );
-	}
-	[ClientRpc]
-	public static void PlayerWonIncrement()
-	{
-		Log.Trace( "PlayerWonIncrement" );
-		Sandbox.Services.Stats.Increment( "wins", 1 );
+		Sandbox.Services.Stats.Increment( "games_played_v2", 1 );
 	}
 
-	[ClientRpc]
-	public static void BlocksDestroyedIncrement()
-	{
-		Log.Trace( "BlocksDestroyedIncrement" );
-		//This is a bit of a waste of bandwidth... (What if we record this on server and set this as soon as you die ?)
-		Sandbox.Services.Stats.Increment( "platform_destroyed", 1 );
-	}
 	[ClientRpc]
 	public static void PushPlayerStats()
 	{
