@@ -102,6 +102,16 @@ public partial class SpleefGame : Sandbox.GameManager
 		BuildLevel();
 	}
 
+
+	static int LevelX { get; set; } = 10;
+	static int LevelY { get; set; } = 10;
+	static int LevelLayers { get; set; } = 3;
+
+	static float HeightOffsetbetweenLayer = 300;
+	static float GroundOffset = 2000;
+	public static float KillZoneHeight { get; } = 800;
+	public static float SpawnHeight => GroundOffset + LevelLayers * HeightOffsetbetweenLayer + 100;
+
 	public void BuildLevel()
 	{
 		//Maybe we should rename this.. Its more like Destroy old level.
@@ -112,17 +122,21 @@ public partial class SpleefGame : Sandbox.GameManager
 
 		//Build map, Ideally we do this a other way, but eyy this works...
 		//With a savegame sounds honestly ideal... Allowing us to reload data somehow...
-		for ( int x = 0; x < 10; x++ )
+		for ( int layer = 0; layer < LevelLayers; layer++ )
 		{
-			for ( int y = 0; y < 10; y++ )
+			for ( int x = 0; x < LevelX; x++ )
 			{
-				Platform pr = PrefabLibrary.Spawn<Platform>( "untitled.prefab" );
-				if ( !pr.IsValid )
+				for ( int y = 0; y < LevelY; y++ )
 				{
-					Log.Error( "Failed to load map part...." );
-					continue;
+					Platform pr = PrefabLibrary.Spawn<Platform>( "untitled.prefab" );
+					if ( !pr.IsValid )
+					{
+						Log.Error( "Failed to load map part...." );
+						continue;
+					}
+					pr.Position = Vector3.Forward * x * pr.CollisionBounds.Size.x + Vector3.Left * y * pr.CollisionBounds.Size.y;
+					pr.Position += Vector3.Up * (GroundOffset + layer * HeightOffsetbetweenLayer);
 				}
-				pr.Position = Vector3.Forward * x * pr.CollisionBounds.Size.x + Vector3.Left * y * pr.CollisionBounds.Size.y + Vector3.Up * 1000.0f;
 			}
 		}
 	}
@@ -151,23 +165,23 @@ public partial class SpleefGame : Sandbox.GameManager
 
 	#region Stats
 	[ClientRpc]
-	public void GamesPlayedIncrement()
+	public static void GamesPlayedIncrement()
 	{
 		Log.Trace( "GamesPlayedIncrement" );
 		Sandbox.Services.Stats.Increment( "games_played", 1 );
 	}
 	[ClientRpc]
-	public void PlayerWonIncrement()
+	public static void PlayerWonIncrement()
 	{
 		Log.Trace( "PlayerWonIncrement" );
 		Sandbox.Services.Stats.Increment( "wins", 1 );
 	}
 
 	[ClientRpc]
-	public void BlocksDestroyedIncrement()
+	public static void BlocksDestroyedIncrement()
 	{
 		Log.Trace( "BlocksDestroyedIncrement" );
-		//This is a bit of a waste of bandwidth...
+		//This is a bit of a waste of bandwidth... (What if we record this on server and set this as soon as you die ?)
 		Sandbox.Services.Stats.Increment( "platform_destroyed", 1 );
 	}
 	[ClientRpc]

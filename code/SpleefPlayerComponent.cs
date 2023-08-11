@@ -16,7 +16,7 @@ namespace Spleef
 	public partial class SpleefPlayerComponent : EntityComponent
 	{
 		float activeTimeTillDestroy { get; set; } = 0;
-		Platform activeInteractPlatform = null;
+		public Platform activeInteractPlatform { get; private set; } = null;
 		public void OnInteractHold( Entity e )
 		{
 			if ( SpleefGame.Instance != null )
@@ -25,7 +25,7 @@ namespace Spleef
 			}
 			else
 			{
-				Log.Error("Spleef game is null ????");
+				Log.Error( "Spleef game is null ????" );
 			}
 
 			if ( !(e is Platform) ) return;
@@ -34,7 +34,6 @@ namespace Spleef
 
 			if ( interactPlatform != activeInteractPlatform )
 			{
-				Log.Info( $"New interact target found {interactPlatform}" );
 				activeInteractPlatform = interactPlatform;
 				activeTimeTillDestroy = activeInteractPlatform.DestroyTimer;
 			}
@@ -50,18 +49,27 @@ namespace Spleef
 				return;
 			}
 
-			Log.Info( $"Time left: {activeTimeTillDestroy}" );
 			if ( activeTimeTillDestroy < 0 )
 			{
-				activeInteractPlatform.OnUse( Entity );
+				if ( !activeInteractPlatform.OnUse( Entity ) )
+				{
+					SpleefGame.BlocksDestroyedIncrement( To.Single( Entity ) );
+				}
 			}
 		}
 
 
+		public void ClearActiveInteract()
+		{
+			activeInteractPlatform = null;
+			activeInteractPlatform.RenderColor = Color.White;
+
+		}
+
 		[GameEvent.Tick.Server]
 		void DeathCheck()
 		{
-			if ( Entity.Position.z < 600 )
+			if ( Entity.Position.z < SpleefGame.KillZoneHeight )
 			{
 				SpleefGame.Instance.OnPlayerDied( Entity.Client );
 			}

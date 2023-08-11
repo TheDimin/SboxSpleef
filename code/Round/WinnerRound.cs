@@ -17,7 +17,7 @@ namespace Spleef
 		{
 			WinningClient = winningClient;
 			Log.Warning( $"We got a winner: {winningClient}" );
-			SpleefGame.Instance.PlayerWonIncrement( To.Single( winningClient ) );
+			SpleefGame.PlayerWonIncrement( To.Single( winningClient ) );
 		}
 		public WinnerRound() { }
 

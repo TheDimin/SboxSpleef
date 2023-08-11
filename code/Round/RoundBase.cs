@@ -44,7 +44,8 @@ namespace Spleef
 			pawn.DressFromClient( client );
 
 			//We don't use respawn points just force pos for now...
-			pawn.Position = Vector3.Up * 1200.0f; // raise it up
+
+			pawn.Position = Vector3.Up * SpleefGame.SpawnHeight; // raise it up
 
 		}
 		#endregion

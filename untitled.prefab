@@ -50,7 +50,7 @@
       },
       "DestroyTimer": {
         "Type": "Single",
-        "Value": "0.4"
+        "Value": "0.2"
       }
     }
   }

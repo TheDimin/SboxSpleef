@@ -43,7 +43,7 @@ namespace Spleef
 
 		public override void OnStateEnter()
 		{
-			SpleefGame.Instance.GamesPlayedIncrement();
+			SpleefGame.GamesPlayedIncrement();
 
 			base.OnStateEnter();
 			foreach ( var client in Game.Clients )
