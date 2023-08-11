@@ -49,6 +49,12 @@
 		if (Camera.Main == null)
 			Log.Error("Invalid Camera?");
 
+		if(client.Pawn == null)
+		{
+			Log.Trace("Pawn is null but nameplate is still valid");
+			return;
+		}
+
 		if (!(client.Pawn is NamePlatePosition))
 		{
 			//TODO allow this to be a component attached to the player

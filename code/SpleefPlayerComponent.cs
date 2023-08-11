@@ -34,6 +34,9 @@ namespace Spleef
 
 			if ( interactPlatform != activeInteractPlatform )
 			{
+				if ( activeInteractPlatform != null )
+					ClearActiveInteract();
+
 				activeInteractPlatform = interactPlatform;
 				activeTimeTillDestroy = activeInteractPlatform.DestroyTimer;
 			}
@@ -61,9 +64,8 @@ namespace Spleef
 
 		public void ClearActiveInteract()
 		{
-			activeInteractPlatform = null;
 			activeInteractPlatform.RenderColor = Color.White;
-
+			activeInteractPlatform = null;
 		}
 
 		[GameEvent.Tick.Server]

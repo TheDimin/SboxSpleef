@@ -2,31 +2,38 @@ Hud {
     .header {
         left: 50%;
         transform: translateX(-50%);
-        top: 80px;
+        top: 40px;
         flex-direction: column;
         position: absolute;
-        gap: 5px;
+        gap: 1px;
+        padding: 15px 10px 5px 10px;
         align-items: center;
+        background-color: rgb(48, 48, 48,0.8);
+        border-radius: 35px;
 
         label {
-            font-family: Roboto;
-            color: white;
+            font-family: "Bobaland";
+            color: rgb(254, 70, 117);
             font-size: 40px;
-            color: white;
-            text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+            text-shadow: 2px 2px white;
 
             &.subtitle {
                 font-size: 25px;
+                text-shadow: 1px 1px white;
             }
         }
+    }
+
+    .header:empty {
+        background-color: transparent;
     }
 
     .crosshair {
         left: 50%;
         top: 50%;
         transform: translate(50%,50%);
-        height: 15px;
-        width: 15px;
+        height: 10px;
+        width: 10px;
         border-color: black;
         border-width: 2px;
         background-color: white;

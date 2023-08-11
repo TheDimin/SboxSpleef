@@ -105,10 +105,15 @@
           "GroupName": "Other"
         },
         {
-          "Name": "Use",
+          "Name": "attack1",
           "KeyboardCode": "Mouse1",
           "GamepadCode": "RightTrigger",
           "GroupName": "Actions"
+        },
+        {
+          "Name": "Duck",
+          "KeyboardCode": "ctrl",
+          "GroupName": "Movement"
         }
       ]
     },

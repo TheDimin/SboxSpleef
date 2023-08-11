@@ -18,7 +18,10 @@ namespace Spleef
 
 		public virtual void OnPlayerQuit( IClient client ) { }
 
-		public virtual void OnPlayerDied( IClient client ) { }
+		public virtual void OnPlayerDied( IClient client )
+		{
+			StartSpectating( client );
+		}
 
 		public virtual void OnStateEnter()
 		{
@@ -29,12 +32,7 @@ namespace Spleef
 
 		protected virtual void SpawnPlayer( IClient client )
 		{
-			//Reset pawn if its already valid...
-			Log.Warning( "Spawning player..." );
-			if ( client.Pawn != null )
-			{
-				client.Pawn.Delete();
-			}
+			client.Pawn?.Delete();
 
 			client.Components.RemoveAny<DevCamera>();
 
@@ -43,9 +41,18 @@ namespace Spleef
 			pawn.Respawn();
 			pawn.DressFromClient( client );
 
-			//We don't use respawn points just force pos for now...
+			pawn.Position = SpleefGame.SpawnPosition;
 
-			pawn.Position = Vector3.Up * SpleefGame.SpawnHeight; // raise it up
+		}
+
+		protected virtual void StartSpectating( IClient client )
+		{
+			client.Pawn?.Delete();
+			client.Pawn = null;
+
+			//TODO call this on the client not server...
+			Camera.Position = SpleefGame.SpawnPosition + Vector3.Backward * 100;
+			SpleefGame.Current.DoPlayerDevCam( client );
 
 		}
 		#endregion

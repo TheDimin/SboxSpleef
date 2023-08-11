@@ -201,8 +201,8 @@ public partial class Pawn : AnimatedEntity, NamePlatePosition
 
 				if ( Using == null )
 				{
-					UseFail();
-					return;
+					if ( spleefPlayerComponent.activeInteractPlatform != null )
+						spleefPlayerComponent.ClearActiveInteract();
 				}
 
 				spleefPlayerComponent.OnInteractHold( Using );
@@ -212,15 +212,6 @@ public partial class Pawn : AnimatedEntity, NamePlatePosition
 				spleefPlayerComponent.ClearActiveInteract();
 			}
 		}
-	}
-
-	/// <summary>
-	/// Player tried to use something but there was nothing there.
-	/// Tradition is to give a disappointed boop.
-	/// </summary>
-	protected virtual void UseFail()
-	{
-		PlaySound( "player_use_fail" );
 	}
 
 	/// <summary>
@@ -249,7 +240,7 @@ public partial class Pawn : AnimatedEntity, NamePlatePosition
 
 		if ( l == null )
 			l = new DebugOverlay();
-	//	Sandbox.Internal.GlobalGameNamespace.DebugOverlay.TraceResult( tr, 10 );
+		//	Sandbox.Internal.GlobalGameNamespace.DebugOverlay.TraceResult( tr, 10 );
 		// See if any of the parent entities are usable if we ain't.
 		var ent = tr.Entity;
 		while ( ent.IsValid() && !IsValidUseEntity( ent ) )

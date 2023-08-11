@@ -15,10 +15,15 @@ namespace Spleef
 		public override void OnStateEnter()
 		{
 			base.OnStateEnter();
+			SpleefGame.Instance.BuildLevel();
+
 			foreach ( IClient client in Game.Clients )
 			{
-				if ( client.Pawn == null )
+				if ( !(client.Pawn != null && client.Pawn.IsValid) )
 					SpawnPlayer( client );
+				else
+					//Prevent client from getting stuck in the ground.
+					client.Pawn.Position += Vector3.Up * 5;
 			}
 
 			ExitConditionCheck();
@@ -41,8 +46,6 @@ namespace Spleef
 
 		public override void OnPlayerDied( IClient client )
 		{
-			base.OnPlayerDied( client );
-
 			SpawnPlayer( client );
 		}
 	}

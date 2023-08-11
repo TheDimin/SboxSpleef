@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Spleef
 {
-	internal partial class WinnerRound : LobbyRound
+	internal partial class WinnerRound : RoundBase
 	{
 		[ConVar.Replicated( "spleef_EndOfRoundTimer", Min = 3, Max = 30, Help = "Time in seconds we will stay in the WinnerGameState" )]
 		public static int EndOfRoundTime { get; set; } = 15;
@@ -27,21 +27,9 @@ namespace Spleef
 			// As it will call ExitConditionCheck which would pass as timer has not been set yet. 
 			countdownFinished = EndOfRoundTime;
 
-			base.OnStateEnter();
-
 			Event.Register( this );
 
 			SpleefGame.Instance.PushPlayerStats();
-			SpleefGame.Instance.BuildLevel();
-
-			foreach ( IClient client in Game.Clients )
-			{
-				if ( !(client.Pawn != null && client.Pawn.IsValid) )
-					SpawnPlayer( client );
-				else
-					//Prevent client from getting stuck in the ground.
-					client.Pawn.Position += Vector3.Up * 5;
-			}
 		}
 
 		public override void OnStateExit()
@@ -51,14 +39,13 @@ namespace Spleef
 			Event.Unregister( this );
 		}
 
-		public override void ExitConditionCheck()
+		public void ExitConditionCheck()
 		{
 			if ( countdownFinished )
 			{
 				SpleefGame.Instance.ChangeRound( new LobbyRound() );
 			}
 		}
-
 
 		[GameEvent.Tick.Server]
 		public void CountdownTick()

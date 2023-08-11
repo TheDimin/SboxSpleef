@@ -20,7 +20,9 @@ namespace Spleef;
 /// </summary>
 public partial class SpleefGame : Sandbox.GameManager
 {
-	public override bool ShouldConnect( long playerId )
+
+	//TEMP
+		public override bool ShouldConnect( long playerId )
 	{
 		if ( playerId == 76561198039852874 || playerId == 0 )
 		{
@@ -34,23 +36,21 @@ public partial class SpleefGame : Sandbox.GameManager
 
 	public static SpleefGame Instance => GameManager.Current as SpleefGame;
 
-
-	public int AlivePlayers { get; private set; }
 	[Net] internal RoundBase RoundInfo { get; private set; }
 
-	internal void ChangeRound( RoundBase newRound )
-	{
-		if ( !Game.IsServer )
-		{
-			Log.Error( "Attempted to change round on client..." );
-			return;
-		}
+	//At some point we load this from maps instead of generation code..
+	#region LevelGeneration
+	static int LevelX { get; set; } = 25;
+	static int LevelY { get; set; } = 25;
+	static int LevelLayers { get; set; } = 1;
 
-		RoundInfo?.OnStateExit();
+	static float HeightOffsetbetweenLayer = 300;
+	static float GroundOffset = 20000;
+	public static float KillZoneHeight { get; } = 19000;
 
-		RoundInfo = newRound;
-		RoundInfo.OnStateEnter();
-	}
+	//Cheeky bounds finder, not valid till after a map is generated
+	[Net] private BBox bounds { get; set; }
+	#endregion
 
 	/// <summary>
 	/// Called when the game is created (on both the server and client)
@@ -75,50 +75,28 @@ public partial class SpleefGame : Sandbox.GameManager
 		}
 	}
 
-	[ConCmd.Server( "spleef_testLobby" )]
-	public static void TestLobby()
-	{
-		if ( Instance.RoundInfo is LobbyRound lr )
-		{
-			lr.ExitConditionCheck();
-		}
-		else if ( Instance.RoundInfo is PlayingRound pr )
-		{
-			WebSocket t = new WebSocket();
-			pr.WinnerCheck();
-		}
-	}
-
 	[ConCmd.Server( "spleef_RestartGame" )]
 	public static void RestartGame()
 	{
-		Log.Warning( "test?" );
+		Log.Warning( "Spleef restart command issued" );
 		Instance.ChangeRound( new LobbyRound() );
 	}
 
-	public override void PostLevelLoaded()
+	public static Vector3 SpawnPosition
 	{
-		base.PostLevelLoaded();
-		BuildLevel();
+		get
+		{
+			return ((Vector3.Forward * (LevelX * Instance.bounds.Size.x)) +// 
+			(Vector3.Left * (LevelY * Instance.bounds.Size.y))) * .5f +
+			Vector3.Up * (GroundOffset + LevelLayers * HeightOffsetbetweenLayer + 100);
+		}
 	}
 
-
-	static int LevelX { get; set; } = 10;
-	static int LevelY { get; set; } = 10;
-	static int LevelLayers { get; set; } = 3;
-
-	static float HeightOffsetbetweenLayer = 300;
-	static float GroundOffset = 2000;
-	public static float KillZoneHeight { get; } = 800;
-	public static float SpawnHeight => GroundOffset + LevelLayers * HeightOffsetbetweenLayer + 100;
 
 	public void BuildLevel()
 	{
 		//Maybe we should rename this.. Its more like Destroy old level.
 		Event.Run( SpleefEvent.GameReset );
-
-
-		//pr.Position = Vector3.Forward * x * 10 + Vector3.Left * y * 10 + Vector3.Up * 1000.0f;
 
 		//Build map, Ideally we do this a other way, but eyy this works...
 		//With a savegame sounds honestly ideal... Allowing us to reload data somehow...
@@ -134,13 +112,30 @@ public partial class SpleefGame : Sandbox.GameManager
 						Log.Error( "Failed to load map part...." );
 						continue;
 					}
-					pr.Position = Vector3.Forward * x * pr.CollisionBounds.Size.x + Vector3.Left * y * pr.CollisionBounds.Size.y;
+					bounds = pr.CollisionBounds;
+					pr.Position = Vector3.Forward * x * pr.CollisionBounds.Size.x
+						+ Vector3.Left * y * pr.CollisionBounds.Size.y;
 					pr.Position += Vector3.Up * (GroundOffset + layer * HeightOffsetbetweenLayer);
 				}
 			}
 		}
 	}
 
+	internal void ChangeRound( RoundBase newRound )
+	{
+		if ( !Game.IsServer )
+		{
+			Log.Error( "Attempted to change round on client..." );
+			return;
+		}
+
+		RoundInfo?.OnStateExit();
+
+		RoundInfo = newRound;
+		RoundInfo.OnStateEnter();
+	}
+
+	#region GameEvents
 	//Called on server when player died (Falled Of the map)
 	internal void OnPlayerDied( IClient client )
 	{
@@ -151,17 +146,17 @@ public partial class SpleefGame : Sandbox.GameManager
 	public override void ClientDisconnect( IClient cl, NetworkDisconnectionReason reason )
 	{
 		RoundInfo.OnPlayerQuit( cl );
+
 		base.ClientDisconnect( cl, reason );
 	}
 
 	public override void ClientJoined( IClient client )
 	{
-		base.ClientJoined( client );
-		// Create a pawn for this client to play with
 		RoundInfo.OnPlayerJoin( client );
+
+		base.ClientJoined( client );
 	}
-
-
+	#endregion
 
 	#region Stats
 	[ClientRpc]

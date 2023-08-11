@@ -11,7 +11,7 @@
 	<VoiceList />
 
 	<div class="header">
-		<h1>@SpleefGame.Instance.RoundInfo.ToString()</h1>
+		<!--<h1>@SpleefGame.Instance.RoundInfo.ToString()</h1>-->
 
 		@if (SpleefGame.Instance.RoundInfo is WinnerRound wr)
 		{
@@ -28,7 +28,7 @@
 		else if (SpleefGame.Instance.RoundInfo is LobbyRound lr)
 		{
 			<label> Waiting for players </label>
-			<subtitle> @GetCurrentPlayerCount() / @LobbyRound.RequiredPlayerCount </subtitle>
+			<label class="subtitle"> @GetCurrentPlayerCount() / @LobbyRound.RequiredPlayerCount </label>
 		}
 	</div>
 
