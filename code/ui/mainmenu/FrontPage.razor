@@ -14,9 +14,9 @@
         }
         else
         {
-            <a class="button" href="/setup">Create Server</a>
+            <a class="button" onclick="@CreateGame">Create Server</a>
 
-            <a class="button" href="/lobby/list">Join Server</a>
+            <a class="button" onclick="@OpenServerList">Join Server</a>
         }
 
         <a class="button" @onclick=@Game.Menu.Close>Quit Spleef</a>
@@ -28,19 +28,33 @@
     void CreateGame()
     {
         var options = new Sandbox.Modals.GameCreateModalOptions();
-        options.Cookie = $"sausagesurvivors.serverconfig";
-        options.ModalTitle = "Create Game";
-        options.MinPlayers = 1;
-        options.MaxPlayers = 4;
+        options.Cookie = $"spleef.serverconfig";
+        options.ModalTitle = "Create Server";
+        options.MinPlayers = 2;
+        options.MaxPlayers = Game.Menu.Package.GetMeta<int>("MaxPlayers", 2);
         options.MapSelection = false;
-        options.Default.GameTitle = $"{Game.UserName}'s Sausage Survival";
+        options.Default.GameTitle = $"{Game.UserName}'s Spleef";
+        options.Default.MaxPlayers = 10;
 
         options.OnStartGame = (setup) =>
         {
-            Game.Menu.StartServerAsync(setup.MaxPlayers, setup.GameTitle, "<empty>");
+            Game.Menu.StartServerAsync(setup.MaxPlayers, setup.GameTitle, "facepunch.square");
         };
 
         Game.Overlay.ShowCreateGame(options);
+    }
+
+    void OpenServerList()
+    {
+        var options = new Sandbox.Modals.ServerListModalOptions();
+        options.ModalTitle = "Spleef Servers";
+        options.TargetGame = "thedimin.spleef";
+        options.OnSelected = (server) =>
+        {
+            Game.Menu.ConnectToServer(server.SteamId);
+        };
+
+        Game.Overlay.ShowServerList(options);
     }
 
     void CloseMenu()
