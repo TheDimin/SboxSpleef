@@ -1,11 +1,4 @@
 ﻿using Sandbox;
-using Sandbox.UI.Tests;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Spleef
 {
@@ -51,8 +44,7 @@ namespace Spleef
 			client.Pawn?.Delete();
 			client.Pawn = null;
 
-			SpleefGame.Instance.MakeSpectator( client, SpleefGame.SpawnPosition + Vector3.Up * 200,
-				Rotation.FromRoll( 90 ) );
+			SpleefGame.Instance.MakeSpectator( client);
 		}
 		#endregion
 	}

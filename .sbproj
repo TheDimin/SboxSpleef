@@ -7,7 +7,7 @@
   "Schema": 1,
   "HasAssets": true,
   "AssetsPath": "",
-  "Resources": null,
+  "Resources": "\nfonts/*\nLICENSE\nREADME.md",
   "MenuResources": "\nui/mainmenu/*",
   "HasCode": true,
   "CodePath": "/code/",
@@ -16,8 +16,8 @@
   ],
   "EditorReferences": null,
   "Metadata": {
-    "MaxPlayers": 16,
-    "MinPlayers": 1,
+    "MaxPlayers": 69,
+    "MinPlayers": 2,
     "GameNetworkType": "Multiplayer",
     "MapSelect": "Unrestricted",
     "MapList": [
@@ -128,13 +128,13 @@
       {
         "DisplayType": "Integer",
         "Choices": [],
-        "ConVarName": "MinPlayers",
-        "DisplayName": "Minimal players",
+        "ConVarName": "RequiredPlayerCount",
+        "DisplayName": "Required Player Count",
         "DefaultValue": "0",
         "Description": "",
-        "Group": "",
+        "Group": "Lobby",
         "Minimum": 2,
-        "Maximum": 10
+        "Maximum": 100
       }
     ],
     "ParentPackage": ""

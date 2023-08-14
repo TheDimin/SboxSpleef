@@ -29,9 +29,10 @@ namespace Spleef
 		float LerpMode = 0;
 
 		[ClientRpc]
-		public void SetPosition( Vector3 newPos )
+		public void SetPositionRotation( Vector3 newPos, Rotation newRot  )
 		{
-			TargetPos = newPos;
+			TargetPos = newPos;	
+			TargetRot = newRot;
 		}
 
 		/// <summary>

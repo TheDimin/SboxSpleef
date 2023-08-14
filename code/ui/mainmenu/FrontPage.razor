@@ -5,33 +5,48 @@
 @using Sandbox.UI;
 
 <root>
-    <div class="game-title">
-        @Game.Menu.Package.Title
-    </div>
-
+   
     <div class="controls">
         @if (Game.InGame)
         {
-            <a class="button" onclick=@LeaveGame>Leave</a>
+            <a class="button" onclick=@CloseMenu>Continue</a>
+            <a class="button" onclick=@LeaveGame>Leave Server</a>
         }
         else
         {
-            <a class="button" href="/setup">Play</a>
+            <a class="button" href="/setup">Create Server</a>
 
-            <a class="button" href="/lobby/list">Lobbies</a>
-
-            @if ( Game.Menu.Package.SupportsSavedGames && Game.Menu.SavedGames.Any())
-            {
-                <a class="button" href="/setup/save">Load Save</a>
-            }
+            <a class="button" href="/lobby/list">Join Server</a>
         }
 
-        <a class="button" @onclick=@Game.Menu.Close>Quit</a>
+        <a class="button" @onclick=@Game.Menu.Close>Quit Spleef</a>
     </div>
 </root>
 
 @code
 {
+    void CreateGame()
+    {
+        var options = new Sandbox.Modals.GameCreateModalOptions();
+        options.Cookie = $"sausagesurvivors.serverconfig";
+        options.ModalTitle = "Create Game";
+        options.MinPlayers = 1;
+        options.MaxPlayers = 4;
+        options.MapSelection = false;
+        options.Default.GameTitle = $"{Game.UserName}'s Sausage Survival";
+
+        options.OnStartGame = (setup) =>
+        {
+            Game.Menu.StartServerAsync(setup.MaxPlayers, setup.GameTitle, "<empty>");
+        };
+
+        Game.Overlay.ShowCreateGame(options);
+    }
+
+    void CloseMenu()
+    {
+        Game.Menu.HideMenu();
+    }
     void LeaveGame()
     {
         Game.Menu.LeaveServer( "Leaving" );

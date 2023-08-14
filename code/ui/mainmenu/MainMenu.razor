@@ -7,33 +7,37 @@
 @attribute [StyleSheet]
 
 <root style="flex-direction: column;">
-    <div class="background" />
-    <div class="navigator-canvas" slot="navigator-canvas" />
+	<div class="background">
+		<div class="title-thumbnail">
+			<img class="game-title" src="https://media.discordapp.net/attachments/440139710501748757/1139619002621116486/spleeflogo.png" />
+		</div>
+	</div>
+	<div class="navigator-canvas" slot="navigator-canvas" />
+
 </root>
 
 @code
 {
-    public MainMenu()
-    {
-        DefaultUrl = "/";
+	public MainMenu()
+	{
+		DefaultUrl = "/";
 
-        AddDestination( "/", typeof( FrontPage ) );
-        AddDestination( "/setup", typeof( SetupGame ) );
+		AddDestination("/", typeof(FrontPage));
+		AddDestination("/setup", typeof(SetupGame));
 
-        AddDestination( "/lobby/list", typeof( LobbyBrowser ) );
-        AddDestination( "/lobby/active", typeof( ActiveLobby ) );
+		AddDestination("/lobby/list", typeof(ServerBrowser));
 
-        BindClass( "ingame", () => Game.InGame );
-    }
+		BindClass("ingame", () => Game.InGame);
+	}
 
-    [GameEvent.Menu.ServerJoined]
-    public void OnServerJoined() => Navigate( "/" );
+	[GameEvent.Menu.ServerJoined]
+	public void OnServerJoined() => Navigate("/");
 
-    [GameEvent.Menu.ServerLeave]
-    public void OnServerLeave() => Navigate ("/" );
+	[GameEvent.Menu.ServerLeave]
+	public void OnServerLeave() => Navigate("/");
 
-    protected override int BuildHash()
-    {
-        return HashCode.Combine( Game.InGame, Game.Menu.Lobby, Game.Menu.Lobby?.Map );
-    }
+	protected override int BuildHash()
+	{
+		return HashCode.Combine(Game.InGame, Game.Menu.Lobby, Game.Menu.Lobby?.Map);
+	}
 }

@@ -6,71 +6,57 @@
 @using Sandbox.UI;
 
 <root>
-    <label class="game-title">
-        @Game.Menu.Package.Title
-    </label>
+	<div class="controls">
 
-    <div class="controls">
-        <div class="span">
-            @if ( MaxPlayersSupported > 1 )
-            {
-                <FormGroup class="form-group">
-                    <Label>Maximum Players</Label>
-                    <Control>
-                        <SliderControl ShowRange=@true Min=@(1f) Max=@MaxPlayersSupported Value:bind=@Game.Menu.Lobby.MaxMembers />
-                    </Control>
-                </FormGroup>
-            }
+		<FormGroup class="form-group">
+			<Label>Game Name</Label>
+			<Control>
+				<TextEntry Value:bind=@serverName></TextEntry>
+			</Control>
+		</FormGroup>
 
-            <FormGroup class="form-group">
-                <Label>Map</Label>
-                <Control>
-                    <SlimPackageCard OnLaunch=@OnMapClicked Package=@MapPackage />
-                </Control>
-            </FormGroup>
-        </div>
+		<FormGroup class="form-group">
+			<Label>Maximum Players: @MaxPlayers.ToString() </Label>
 
-        <div class="spacer" />
+			<Control>
+				<SliderControl Min=@(1) ShowRange=@true
+							   Max=@MaxPlayersSupported Value:bind=@MaxPlayers > </SliderControl>
+			</Control>
+		</FormGroup>
 
-        <a class="button" onclick=@Play>Start</a>
-        <a class="button" href="/">Return</a>
-    </div>
+		<div class="spacer" />
+
+		<a class="button" onclick=@Play>Start</a>
+		<a class="button" href="/">Return</a>
+	</div>
 </root>
 
 @code
 {
-    int MaxPlayersSupported { get; set; } = 1;
-    int MaxPlayers { get; set; } = 1;
-    Package MapPackage { get; set; }
+	string serverName { get; set; } = "MySpleefGame";
+	int MaxPlayersSupported { get; set; } = 1;
+	int MaxPlayers { get; set; } = 1;
+	Package MapPackage { get; set; }
 
-    void OnMapClicked()
-    {
-        Game.Overlay.ShowPackageSelector( "type:map sort:popular", OnMapSelected );
-        StateHasChanged();
-    }
 
-    void OnMapSelected( Package map )
-    {
-        MapPackage = map;
-        StateHasChanged();
-    }
+	protected override async Task OnParametersSetAsync()
+	{
+		MaxPlayersSupported = Game.Menu.Package.GetMeta<int>("MaxPlayers", 2);
+		MaxPlayers = 24;
 
-    protected override async Task OnParametersSetAsync()
-    {
-        MaxPlayersSupported = Game.Menu.Package.GetMeta<int>( "MaxPlayers", 1 );
-        MaxPlayers = MaxPlayersSupported;
+		MapPackage = await Package.FetchAsync("facepunch.square", false);
+		StateHasChanged();
+	}
 
-        MapPackage = await Package.FetchAsync( "facepunch.square", false );
-        StateHasChanged();
-    }
+	async Task Play()
+	{
+		await Game.Menu.StartServerAsync(MaxPlayers, serverName, MapPackage.FullIdent);
+	}
 
-    async Task Play()
-    {
-        await Game.Menu.StartServerAsync( MaxPlayers, $"My game", MapPackage.FullIdent );
-    }
-
-    protected override int BuildHash()
-    {
-        return HashCode.Combine( MaxPlayers, MapPackage );
-    }
+	protected override int BuildHash()
+	{
+		
+		return HashCode.Combine(Time.Now);
+		//return HashCode.Combine( MaxPlayers, MapPackage );
+	}
 }

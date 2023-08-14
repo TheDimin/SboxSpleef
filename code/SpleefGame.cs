@@ -172,12 +172,15 @@ public partial class SpleefGame : Sandbox.GameManager
 	#endregion
 
 
-	public virtual SpectatorComponent MakeSpectator( IClient client, Vector3 pos, Rotation rotation )
+	public virtual SpectatorComponent MakeSpectator( IClient client )
 	{
 		Game.AssertServer();
 
 		client.Pawn?.Delete();
 		client.Pawn = null;
+
+		Vector3 pos = SpleefGame.SpawnPosition + Vector3.Up * 200;
+		Rotation rot = Rotation.FromRoll( 90 );
 
 		var camera = client.Components.Get<SpectatorComponent>( true );
 
@@ -186,17 +189,13 @@ public partial class SpleefGame : Sandbox.GameManager
 			camera = new SpectatorComponent();
 			client.Components.Add( camera );
 
-			camera.SetPosition(pos);
-			//camera.TargetPos = pos;
-			//camera.TargetRot = rotation;
+			camera.SetPositionRotation( pos,rot);
 
 			return camera;
 		}
 
 		camera.Enabled = !camera.Enabled;
-		camera.SetPosition(pos);
-		//camera.TargetPos = pos;
-		//camera.TargetRot = rotation;
+		camera.SetPositionRotation( pos,rot);
 
 		return camera;
 	}

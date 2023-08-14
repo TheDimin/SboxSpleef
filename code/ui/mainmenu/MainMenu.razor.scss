@@ -1,6 +1,5 @@
 
-MainMenu
-{
+MainMenu {
     background-color: #262934;
     padding: 128px 128px;
     opacity: 1;
@@ -12,55 +11,59 @@ MainMenu
     transition: all 0.3s ease-out;
     color: rgba( white, 0.8 );
 
-    .background
-    {
+    .background {
         position: absolute;
         width: 100%;
         height: 100%;
-        background-image: url( https://files.facepunch.com/tony/1b1311b1/boxes.webm );
-        opacity: 0.2;
+        background-color: rgb(0, 123, 231);
         background-size: cover;
-        filter: blur( 20px );
-        mask: linear-gradient( 45deg, white, white, black );
+        filter: blur( 10px );
+        mask: linear-gradient( 25deg, white, rgb(0, 123, 231), black );
         mask-scope: filter;
         background-repeat: no-repeat;
     }
 
-    &:intro
-    {
+    &:intro {
         opacity: 0;
         transform: scaleX( 1.1 );
     }
 
-    &.ingame
-    {
+    &.ingame {
         background-color: #262934ee;
         backdrop-filter: blur(10px);
 
-        .background
-        {
+        .background {
             opacity: 0;
         }
     }
 
-    .scroll
-    {
+    .scroll {
         flex-direction: column;
         max-height: 386px;
         overflow: scroll;
         gap: 50px;
     }
 
-    .spacer
-    {
+    .spacer {
         height: 1px;
         background-image: linear-gradient( to right, rgba( white, 0.4 ), rgba( white, 0 ) );
         width: 512px;
         margin: 16px 0px;
     }
 
-    .game-title
-    {
+    .title-thumbnail {
+        position: absolute;
+        right:100px;
+        top:0;
+        overflow: hidden;
+        height: 600px;
+        width: 600px;
+    }
+
+    .game-title {
+        background-image: url( https://media.discordapp.net/attachments/440139710501748757/1139619002621116486/spleeflogo.png );
+        width: 600px;
+        height: auto;
         font-family: Roboto Condensed;
         font-weight: 700;
         font-size: 70px;
@@ -68,53 +71,45 @@ MainMenu
         padding-bottom: 64px;
     }
 
-    .col
-    {
+    .col {
         flex-direction: column;
         gap: 16px;
     }
 
-    .controls
-    {
+    .controls {
         flex-direction: column;
         gap: 50px;
         align-items: flex-start;
         text-transform: uppercase;
 
-        a, .button
-        {
+        a, .button {
             font-family: Roboto;
 
-            &:hover
-            {
+            &:hover {
                 color: rgba( white, 1 );
                 font-weight: 900;
                 sound-in: ui.button.over;
                 cursor: pointer;
             }
 
-            &:active
-            {
+            &:active {
                 sound-in: ui.button.press;
             }
         }
 
-        .span
-        {
+        .span {
             gap: 128px;
         }
     }
 
-    .navigator-canvas
-    {
+    .navigator-canvas {
         flex-direction: column;
         height: 100%;
         flex-grow: 1;
         flex-shrink: 0;
     }
 
-    .navigator-body
-    {
+    .navigator-body {
         position: absolute;
         left: 0;
         right: 0;
@@ -124,72 +119,60 @@ MainMenu
         justify-content: center;
         transition: opacity 0.15s ease-out;
 
-        &.hidden
-        {
+        &.hidden {
             opacity: 0;
         }
     }
 }
 
-FormGroup
-{
+FormGroup {
     flex-direction: column;
     min-width: 300px;
-    gap:16px;
+    gap: 16px;
 }
 
-SlimPackageCard
-{
+SlimPackageCard {
     flex-direction: row;
     gap: 12px;
     align-items: center;
 
-    > i
-    {
-        &:hover
-        {
+    > i {
+        &:hover {
             cursor: pointer;
             color: white;
             transform: scale( 1.1 );
             sound-in: ui.button.over;
         }
 
-        &:active
-        {
+        &:active {
             sound-in: ui.button.press;
         }
     }
 }
 
-i
-{
+i {
     font-family: Material Icons;
     text-transform: lowercase;
 
-    &.with-click
-    {
-        &:hover
-        {
+    &.with-click {
+        &:hover {
             cursor: pointer;
             color: white;
             transform: scale( 1.1 );
             sound-in: ui.button.over;
         }
 
-        &:active
-        {
+        &:active {
             sound-in: ui.button.press;
         }
     }
 }
 
-.avatar
-{
+.avatar {
     width: 64px;
     height: 64px;
 
-    &:hover
-    {
+    &:hover {
         border: 1px solid white;
     }
 }

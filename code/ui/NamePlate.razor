@@ -10,7 +10,7 @@
 	<div class="Background">
 		<img class="SteamAvatar" src="avatar:@client.SteamId" />
 		<p class=@CSSFriendStatus()>@client.Name</p>
-		@if (client.Voice.LastHeard < .1f)
+		@if (client.Voice.LastHeard < .15f)
 		{
 			<img class="SpeakerIcon" src="https://cdn-icons-png.flaticon.com/512/2/2384.png" />
 		}

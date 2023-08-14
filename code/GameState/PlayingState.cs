@@ -17,7 +17,7 @@ namespace Spleef
 		public override void OnPlayerJoin( IClient client )
 		{
 			base.OnPlayerJoin( client );
-			SpleefGame.Current.DoPlayerDevCam( client );
+			SpleefGame.Instance.MakeSpectator( client );
 		}
 		public override void OnPlayerQuit( IClient client )
 		{
@@ -33,7 +33,7 @@ namespace Spleef
 		{
 			base.OnPlayerDied( client );
 			AliveClients.Remove( client );
-			
+
 			WinnerCheck();
 		}
 

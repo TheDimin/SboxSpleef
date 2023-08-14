@@ -1,0 +1,60 @@
+﻿.ServerEntry {
+    .Panel {
+        background-color: rgb(255, 106, 0);
+        border-radius: 4px;
+        position: relative;
+        margin: 100px;
+    }
+
+    .MapIcon {
+        width: 27px;
+        height: 27px;
+        position: relative;
+        left: 5px;
+        top: 2.5px;
+        border-radius: 4px;
+        background-image: url(images/map.png);
+        background-repeat: no-repeat;
+        background-size: cover;
+    }
+
+    .ServerName {
+        color: rgba(255, 255, 255, 1);
+        height: 15px;
+        position: relative;
+        top: 8.5px;
+        font-family: Inter;
+        text-align: left;
+        font-size: 12px;
+        letter-spacing: 0;
+    }
+
+    .RightHandPanel {
+        background-color: rgb(255, 0, 0);
+        width: 100px;
+        height: 100%;
+    }
+
+    .ConnectedPlayers {
+        color: rgba(255, 255, 255, 1);
+        width: 33px;
+        height: 12px;
+        position: absolute;
+        left: 35px;
+        top: 10px;
+        font-family: Inter;
+        text-align: center;
+        font-size: 10px;
+        letter-spacing: 0;
+    }
+
+    .Connection {
+        color: rgb(255, 0, 0);
+        width: 21px;
+        height: 100%;
+        font-family: Inter;
+        text-align: left;
+        font-size: 8px;
+        letter-spacing: 0;
+    }
+}
