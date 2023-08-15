@@ -17,6 +17,9 @@ public partial class Pawn : AnimatedEntity, NamePlatePosition
 
 	[ClientInput]
 	public Angles ViewAngles { get; set; }
+	
+		[ConVar.Replicated( "spleef_Pawn_InteractionDistance" )]
+		static float interactionDistance {get;set;} = 280;
 
 	/// <summary>
 	/// Position a player should be looking from in world space.
@@ -234,7 +237,7 @@ public partial class Pawn : AnimatedEntity, NamePlatePosition
 	protected Entity FindUsable()
 	{
 		// First try a direct 0 width line
-		var tr = Trace.Ray( AimRay, 185 )
+		var tr = Trace.Ray( AimRay, interactionDistance )
 			.Ignore( this )
 			.Run();
 

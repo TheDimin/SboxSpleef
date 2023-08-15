@@ -6,6 +6,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Sandbox.Diagnostics;
+using Sandbox.UI;
 
 //
 // You don't need to put things in a namespace, but it doesn't hurt.
@@ -137,16 +138,25 @@ public partial class SpleefGame : Sandbox.GameManager
 	{
 		gamestate.OnPlayerQuit( cl );
 
+		SendPlayerStatus( cl, false );
 		base.ClientDisconnect( cl, reason );
 	}
 
 	public override void ClientJoined( IClient client )
 	{
 		gamestate.OnPlayerJoin( client );
+		SendPlayerStatus( client, true );
 
 		base.ClientJoined( client );
 	}
 	#endregion
+
+	[ClientRpc]
+	public void SendPlayerStatus( IClient client, bool Joined )
+	{
+		string status = Joined ? "Joined" : "Left";
+		ChatBox.AddInformation( $"{client.Name} has {status} the match !" );
+	}
 
 	#region Stats
 	[ClientRpc]
@@ -154,7 +164,8 @@ public partial class SpleefGame : Sandbox.GameManager
 	public static void GamesPlayedIncrement()
 	{
 		Log.Trace( "GamesPlayedIncrement" );
-		Sandbox.Services.Stats.Increment( "games_played_v2", 1 );
+		if ( !Game.IsEditor )
+			Sandbox.Services.Stats.Increment( "games_played_v2", 1 );
 	}
 
 	[ClientRpc]
@@ -189,13 +200,13 @@ public partial class SpleefGame : Sandbox.GameManager
 			camera = new SpectatorComponent();
 			client.Components.Add( camera );
 
-			camera.SetPositionRotation( pos,rot);
+			camera.SetPositionRotation( pos, rot );
 
 			return camera;
 		}
 
 		camera.Enabled = !camera.Enabled;
-		camera.SetPositionRotation( pos,rot);
+		camera.SetPositionRotation( pos, rot );
 
 		return camera;
 	}

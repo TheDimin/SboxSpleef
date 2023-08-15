@@ -50,7 +50,7 @@
       },
       "DestroyTimer": {
         "Type": "Single",
-        "Value": "0.2"
+        "Value": "0.125"
       },
       "RenderColor": {
         "Type": "Color",

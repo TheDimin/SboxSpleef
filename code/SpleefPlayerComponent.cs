@@ -56,7 +56,8 @@ namespace Spleef
 			{
 				if ( !activeInteractPlatform.OnUse( Entity ) )
 				{
-					Sandbox.Services.Stats.Increment( Entity.Client, "platforms_destroyed_v2", 1 );
+					if ( !Game.IsEditor )
+						Sandbox.Services.Stats.Increment( Entity.Client, "platforms_destroyed_v2", 1 );
 				}
 			}
 		}

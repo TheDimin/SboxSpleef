@@ -9,8 +9,8 @@ namespace Spleef
 {
 	internal partial class WinnerState : GameStateBase
 	{
-		[ConVar.Replicated( "spleef_EndOfRoundTimer", Min = 3, Max = 30, Help = "Time in seconds we will stay in the WinnerGameState" )]
-		public static int EndOfRoundTime { get; set; } = 15;
+		[ConVar.Replicated( "spleef_EndOfRoundTimer", Min = 1, Help = "Time in seconds we will stay in the WinnerGameState" )]
+		public static int EndOfRoundTime { get; set; } = 4;
 		//TODO break out the finished countdown into a seperate gamestate
 		[Net] public TimeUntil countdownFinished { get; private set; } = 999999;
 		[Net] internal IClient WinningClient { get; set; }
@@ -18,8 +18,8 @@ namespace Spleef
 		{
 			WinningClient = winningClient;
 			Log.Warning( $"We got a winner: {winningClient}" );
-
-			Sandbox.Services.Stats.Increment(winningClient, "games_won_v2", 1 );
+			if ( !Game.IsEditor )
+				Sandbox.Services.Stats.Increment( winningClient, "games_won_v2", 1 );
 		}
 		public WinnerState() { }
 

@@ -8,10 +8,17 @@ public class PawnController : EntityComponent<Pawn>
 {
 	public int StepSize => 24;
 	public int GroundAngle => 45;
-	public int JumpSpeed => 300;
+	[ConVar.Replicated( "spleef_Pawn_JumpSpeed", Min = 0 )]
+	public static int JumpSpeed {get;set;}= 250;
 	public float Gravity => 800f;
+	[ConVar.Replicated( "spleef_Pawn_WalkSpeed", Min = 1 )]
+	public static float moveSpeed {get;set;}= 420f;
+	[ConVar.Replicated( "spleef_Pawn_RunModifier", Min = 1 )]
+	public static float runModifier {get;set; } =2.5f;
+		[ConVar.Replicated( "spleef_Pawn_AccerlerationSpeed", Min = 0.1f )]
+	public static float accerlerationSpeed {get;set; }= 7.5f;
 
-	HashSet<string> ControllerEvents = new( StringComparer.OrdinalIgnoreCase );
+		HashSet<string> ControllerEvents = new( StringComparer.OrdinalIgnoreCase );
 
 	bool Grounded => Entity.GroundEntity.IsValid();
 
@@ -32,7 +39,7 @@ public class PawnController : EntityComponent<Pawn>
 				AddEvent( "grounded" );
 			}
 
-			Entity.Velocity = Accelerate( Entity.Velocity, moveVector.Normal, moveVector.Length, 200.0f * ( Input.Down( "run" ) ? 2.5f : 1f ), 7.5f );
+			Entity.Velocity = Accelerate( Entity.Velocity, moveVector.Normal, moveVector.Length, moveSpeed * (Input.Down( "run" ) ? runModifier : 1f), accerlerationSpeed );
 			Entity.Velocity = ApplyFriction( Entity.Velocity, 4.0f );
 		}
 		else

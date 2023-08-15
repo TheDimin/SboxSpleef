@@ -12,7 +12,8 @@ namespace Spleef
 		[Net] public TimeUntil countdownFinished { get; private set; } = 999999;
 
 		//TODO CONFIG VARIABLE...
-		static float StartCountdown = 3;
+		[ConVar.Replicated( "spleef_StartRoundTime", Min = 3 )]
+		static float StartCountdown {get;set;} = 8;
 		public override void OnStateEnter()
 		{
 			//Important that countdown is set before Base.OnStateEnter 
@@ -25,7 +26,6 @@ namespace Spleef
 		public override void OnStateExit()
 		{
 			base.OnStateExit();
-
 			Event.Unregister( this );
 		}
 
