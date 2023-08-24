@@ -64,6 +64,7 @@ namespace Spleef
 		public override void TakeDamage( DamageInfo info )
 		{
 			base.TakeDamage( info );
+			VisualizeHealth();
 		}
 
 		public virtual void StopInteraction( SpleefPlayerComponent playerComponent )
