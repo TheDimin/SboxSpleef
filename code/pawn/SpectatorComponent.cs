@@ -24,15 +24,19 @@ namespace Spleef
 
 		float MoveSpeed;
 		float BaseMoveSpeed = 300.0f;
-		float FovOverride = 0;
 
 		float LerpMode = 0;
 
 		[ClientRpc]
-		public void SetPositionRotation( Vector3 newPos, Rotation newRot  )
+		public void SetPositionRotation( Vector3 newPos, Rotation newRot )
 		{
-			TargetPos = newPos;	
+			TargetPos = newPos;
 			TargetRot = newRot;
+
+			Position = TargetPos;
+			Rotation = TargetRot;
+
+			LookAngles = Rotation.Angles();
 		}
 
 		/// <summary>
@@ -40,19 +44,11 @@ namespace Spleef
 		/// </summary>
 		protected override void OnActivate()
 		{
-			if ( !Game.IsClient )
+			if ( !Game.IsClient || Entity != Game.LocalClient )
 				return;
 
-			if ( Entity != Game.LocalClient )
-				return;
 
-			TargetPos = Camera.Position;
-			TargetRot = Camera.Rotation;
-
-			Position = TargetPos;
-			Rotation = TargetRot;
-			LookAngles = Rotation.Angles();
-			FovOverride = 80;
+			Log.Warning( "OnActivate" );
 		}
 
 		protected override void OnDeactivate()
@@ -76,7 +72,7 @@ namespace Spleef
 
 			Camera.Position = Position;
 			Camera.Rotation = Rotation;
-			Camera.FieldOfView = Screen.CreateVerticalFieldOfView( FovOverride );
+			Camera.FieldOfView = Screen.CreateVerticalFieldOfView( Game.Preferences.FieldOfView );
 			Camera.FirstPersonViewer = null;
 		}
 
@@ -92,7 +88,7 @@ namespace Spleef
 			if ( Input.Down( "run" ) ) MoveSpeed = 5;
 
 
-			LookAngles += Input.AnalogLook * (FovOverride / 80.0f);
+			LookAngles += Input.AnalogLook * (Game.Preferences.FieldOfView / 80.0f);
 			LookAngles.roll = 0;
 
 			if ( PivotEnabled )

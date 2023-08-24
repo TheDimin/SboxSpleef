@@ -22,6 +22,11 @@
 		}
 		else if (SpleefGame.Instance.gamestate is PlayingState pr)
 		{
+			if (Game.LocalClient.Pawn == null)
+			{
+				<label>Spectating </label>
+				<label class="subtitle"> Waiting for next round..</label>
+			}
 		}
 		else if (SpleefGame.Instance.gamestate is LobbyState lr)
 		{
@@ -30,7 +35,7 @@
 		}
 	</div>
 
-	@if (SpleefGame.Instance.gamestate is PlayingState)
+	@if (SpleefGame.Instance.gamestate is PlayingState && Game.LocalClient.Pawn != null)
 	{
 		<span class="crosshair"></span>
 	}
