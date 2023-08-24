@@ -11,7 +11,7 @@ namespace Spleef
 {
 	public static partial class SpleefEvent
 	{
-		 public const string GameReset = "SpleefReset";
+		public const string GameReset = "SpleefReset";
 		public class OnGameResetAttribute : EventAttribute
 		{
 			public OnGameResetAttribute() : base( GameReset ) { }
@@ -20,15 +20,65 @@ namespace Spleef
 
 
 	[Prefab, HammerEntity, Library( "thedimin_spleef" )]
-	[Title("Spleef Platform"),Category("Platform"),Icon("place")]
+	[Title( "Spleef Platform" ), Category( "Platform" ), Icon( "place" )]
 	public partial class Platform : ModelEntity, IUse
 	{
-		[Prefab] public float DestroyTimer { get; set; } = .01f;
+		[Prefab] public float MaxHP { get; set; } = 100;
+
+		[Prefab] public Color defaultColor { get; set; } = Color.White;
+		[Prefab] public Color deathColor { get; set; } = Color.Black;
+
+
 		public override void Spawn()
 		{
 			base.Spawn();
+
+			Respawn();
 		}
 
+		public override void OnKilled()
+		{
+			if ( LifeState == LifeState.Alive )
+			{
+				if ( !Game.IsEditor )
+					Sandbox.Services.Stats.Increment( LastAttacker.Client, "platforms_destroyed_v2", 1 );
+
+				LifeState = LifeState.Respawnable;
+
+				EnableDrawing = false;
+				PhysicsBody.Enabled = false;
+			}
+		}
+
+		[SpleefEvent.OnGameReset]
+		public virtual void Respawn()
+		{
+			LifeState = LifeState.Respawning;
+			EnableDrawing = true;
+			PhysicsBody.Enabled = true;
+			Health = MaxHP;
+			VisualizeHealth();
+			LifeState = LifeState.Alive;
+		}
+
+		public override void TakeDamage( DamageInfo info )
+		{
+			base.TakeDamage( info );
+			VisualizeHealth();
+		}
+
+		public virtual void StopInteraction( SpleefPlayerComponent playerComponent )
+		{
+			//This doens't make much sense anymore heal platform instead ?
+			Respawn();
+		}
+
+		protected virtual void VisualizeHealth()
+		{
+			RenderColor = Color.Lerp( Color.Black, Color.White, Health / MaxHP );
+		}
+
+		//IUseable is just used to limit quary results, we don't use it otherwise. We use the Apply damage events now !
 		public bool IsUsable( Entity user )
 		{
 			return true;
@@ -36,14 +86,8 @@ namespace Spleef
 
 		public bool OnUse( Entity user )
 		{
-			Delete();
 			return false;
-		}
 
-		[SpleefEvent.OnGameReset]
-		public void OnGameReset()
-		{
-			Delete();
 		}
 	}
 }

@@ -25,12 +25,23 @@ public partial class SpleefGame : Sandbox.GameManager
 {
 	public static SpleefGame Instance => GameManager.Current as SpleefGame;
 
+	public static bool CanDestroyBlocks
+	{
+		get
+		{
+			if ( Instance?.gamestate == null )
+				return false;
+
+			return Instance.gamestate.CanDestroyBlocks;
+		}
+	}
+
 	[Net] internal GameStateBase gamestate { get; private set; }
 
 	//At some point we load this from maps instead of generation code..
 	#region LevelGeneration
-	static int LevelX { get; set; } = 25;
-	static int LevelY { get; set; } = 25;
+	static int LevelX { get; set; } = 4;
+	static int LevelY { get; set; } = 4;
 	static int LevelLayers { get; set; } = 1;
 
 	static float HeightOffsetbetweenLayer = 300;
@@ -54,7 +65,10 @@ public partial class SpleefGame : Sandbox.GameManager
 		}
 
 		if ( Game.IsServer )
+		{
+			SpleefGame.Instance.BuildLevel();
 			ChangeRound( new LobbyState() );
+		}
 	}
 
 	~SpleefGame()
@@ -69,6 +83,8 @@ public partial class SpleefGame : Sandbox.GameManager
 	public static void RestartGame()
 	{
 		Log.Warning( "Spleef restart command issued" );
+
+		SpleefGame.Instance.BuildLevel();
 		Instance.ChangeRound( new LobbyState() );
 	}
 
@@ -85,8 +101,6 @@ public partial class SpleefGame : Sandbox.GameManager
 
 	public void BuildLevel()
 	{
-		//Maybe we should rename this.. Its more like Destroy old level.
-		Event.Run( SpleefEvent.GameReset );
 
 		//Build map, Ideally we do this a other way, but eyy this works...
 		//With a savegame sounds honestly ideal... Allowing us to reload data somehow...

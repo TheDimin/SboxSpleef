@@ -1,7 +1,9 @@
 ﻿using Sandbox;
 using Sandbox.Component;
+using Sandbox.Diagnostics;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,62 +17,38 @@ namespace Spleef
 	/// </summary>
 	public partial class SpleefPlayerComponent : EntityComponent
 	{
-		float activeTimeTillDestroy { get; set; } = 0;
-		public Platform activeInteractPlatform { get; private set; } = null;
-		public void OnInteractHold( Entity e )
+		public Platform LastDamagedPlatform { get; protected set; } = null;
+		public TimeUntil InteractCooldown { get; protected set; } = 0;
+
+		public static float CooldownAfterBlockDamaged { get; set; } = .000f;
+
+		public virtual void ApplyDamageToPlatform( [NotNull] Platform platform, float damage )
 		{
-			if ( SpleefGame.Instance != null )
-			{
-				if ( !SpleefGame.Instance.gamestate.CanDestroyBlocks ) return;
-			}
-			else
-			{
-				Log.Error( "Spleef game is null ????" );
-			}
+			Game.AssertServer();
 
-			if ( !(e is Platform) ) return;
+			if ( !InteractCooldown ) return;
 
-			Platform interactPlatform = (Platform)e;
+			if ( !SpleefGame.CanDestroyBlocks ) return;
 
-			if ( interactPlatform != activeInteractPlatform )
-			{
-				if ( activeInteractPlatform != null )
-					ClearActiveInteract();
+			platform.TakeDamage( DamageInfo.Generic( damage ).WithAttacker( Entity ).WithTag( "Attack" ) );
 
-				activeInteractPlatform = interactPlatform;
-				activeTimeTillDestroy = activeInteractPlatform.DestroyTimer;
-			}
+			LastDamagedPlatform = platform;
 
-			activeTimeTillDestroy -= Time.Delta;
-
-			activeInteractPlatform.RenderColor = Color.Lerp( Color.Black, Color.White, activeTimeTillDestroy / activeInteractPlatform.DestroyTimer );
-
-			if ( !activeInteractPlatform.IsValid )
-			{
-				activeInteractPlatform = null;
-				activeTimeTillDestroy = 0;
-				return;
-			}
-
-			if ( activeTimeTillDestroy < 0 )
-			{
-				if ( !activeInteractPlatform.OnUse( Entity ) )
-				{
-					if ( !Game.IsEditor )
-						Sandbox.Services.Stats.Increment( Entity.Client, "platforms_destroyed_v2", 1 );
-				}
-			}
+			InteractCooldown = CooldownAfterBlockDamaged;
 		}
 
-
-		public void ClearActiveInteract()
+		public virtual void OnWalkOverPlatform( [NotNull] Platform platform, float damage = 5 )
 		{
-			activeInteractPlatform.RenderColor = Color.White;
-			activeInteractPlatform = null;
+			Game.AssertServer();
+
+			if ( !SpleefGame.CanDestroyBlocks ) return;
+
+			platform.TakeDamage( DamageInfo.Generic( damage ).WithAttacker( Entity ).WithTag( "Attack" ) );
 		}
+
 
 		[GameEvent.Tick.Server]
-		void DeathCheck()
+		protected virtual void DeathCheck()
 		{
 			if ( Entity.Position.z < SpleefGame.KillZoneHeight )
 			{
