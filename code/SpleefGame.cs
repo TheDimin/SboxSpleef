@@ -199,16 +199,16 @@ public partial class SpleefGame : Sandbox.GameManager
 		{
 			camera = new SpectatorComponent();
 			client.Components.Add( camera );
-
-			camera.SetPositionRotation( pos, rot );
+			camera.SetPositionRotation( To.Single( client ), pos, rot );
 
 			return camera;
 		}
 
 		camera.Enabled = !camera.Enabled;
-		camera.SetPositionRotation( pos, rot );
+		camera.SetPositionRotation( To.Single( client ), pos, rot );
 
 		return camera;
 	}
+
 }
 
