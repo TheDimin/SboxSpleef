@@ -15,7 +15,8 @@ namespace Spleef
 		public override void OnStateEnter()
 		{
 			base.OnStateEnter();
-			SpleefGame.Instance.BuildLevel();
+			//Maybe we should rename this.. Its more like Destroy old level.
+			Event.Run( SpleefEvent.GameReset );
 
 			foreach ( IClient client in Game.Clients )
 			{

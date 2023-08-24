@@ -2,6 +2,7 @@
 using Sandbox.Component;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,58 +16,23 @@ namespace Spleef
 	/// </summary>
 	public partial class SpleefPlayerComponent : EntityComponent
 	{
-		float activeTimeTillDestroy { get; set; } = 0;
-		public Platform activeInteractPlatform { get; private set; } = null;
-		public void OnInteractHold( Entity e )
+		public Platform LastDamagedPlatform { get; protected set; } = null;
+		public TimeUntil InteractCooldown { get; protected set; } = 0;
+
+		public static float CooldownAfterBlockDamaged { get; set; } = .000f;
+
+		public static float PlatformHitDamage { get; set; } = 100;
+
+		public virtual void ApplyDamageToPlatform( [NotNull] Platform platform )
 		{
-			if ( SpleefGame.Instance != null )
-			{
-				if ( !SpleefGame.Instance.gamestate.CanDestroyBlocks ) return;
-			}
-			else
-			{
-				Log.Error( "Spleef game is null ????" );
-			}
+			if ( !InteractCooldown ) return;
 
-			if ( !(e is Platform) ) return;
+			if ( !SpleefGame.CanDestroyBlocks ) return;
 
-			Platform interactPlatform = (Platform)e;
+			platform.TakeDamage( DamageInfo.Generic( PlatformHitDamage ).WithAttacker( Entity ) );
 
-			if ( interactPlatform != activeInteractPlatform )
-			{
-				if ( activeInteractPlatform != null )
-					ClearActiveInteract();
-
-				activeInteractPlatform = interactPlatform;
-				activeTimeTillDestroy = activeInteractPlatform.DestroyTimer;
-			}
-
-			activeTimeTillDestroy -= Time.Delta;
-
-			activeInteractPlatform.RenderColor = Color.Lerp( Color.Black, Color.White, activeTimeTillDestroy / activeInteractPlatform.DestroyTimer );
-
-			if ( !activeInteractPlatform.IsValid )
-			{
-				activeInteractPlatform = null;
-				activeTimeTillDestroy = 0;
-				return;
-			}
-
-			if ( activeTimeTillDestroy < 0 )
-			{
-				if ( !activeInteractPlatform.OnUse( Entity ) )
-				{
-					if ( !Game.IsEditor )
-						Sandbox.Services.Stats.Increment( Entity.Client, "platforms_destroyed_v2", 1 );
-				}
-			}
-		}
-
-
-		public void ClearActiveInteract()
-		{
-			activeInteractPlatform.RenderColor = Color.White;
-			activeInteractPlatform = null;
+			LastDamagedPlatform = platform;
+			InteractCooldown = CooldownAfterBlockDamaged;
 		}
 
 		[GameEvent.Tick.Server]

@@ -17,9 +17,9 @@ public partial class Pawn : AnimatedEntity, NamePlatePosition
 
 	[ClientInput]
 	public Angles ViewAngles { get; set; }
-	
-		[ConVar.Replicated( "spleef_Pawn_InteractionDistance" )]
-		static float interactionDistance {get;set;} = 280;
+
+	[ConVar.Replicated( "spleef_Pawn_InteractionDistance" )]
+	static float interactionDistance { get; set; } = 280;
 
 	/// <summary>
 	/// Position a player should be looking from in world space.
@@ -202,17 +202,9 @@ public partial class Pawn : AnimatedEntity, NamePlatePosition
 			{
 				Using = FindUsable();
 
-				if ( Using == null )
-				{
-					if ( spleefPlayerComponent.activeInteractPlatform != null )
-						spleefPlayerComponent.ClearActiveInteract();
-				}
+				if ( !(Using is Platform) ) return;
 
-				spleefPlayerComponent.OnInteractHold( Using );
-			}
-			else if ( spleefPlayerComponent.activeInteractPlatform != null )
-			{
-				spleefPlayerComponent.ClearActiveInteract();
+				spleefPlayerComponent.ApplyDamageToPlatform( (Platform)Using );
 			}
 		}
 	}
