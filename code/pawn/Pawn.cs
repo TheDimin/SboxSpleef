@@ -22,6 +22,10 @@ public partial class Pawn : AnimatedEntity, NamePlatePosition
 	[ConVar.Replicated( "spleef_Pawn_PlatformInteractDamage" )]
 	public static float PlatformHitDamage { get; set; } = 100;
 
+
+	[ConVar.Replicated( "spleef_Pawn_PlatformStandDamage",Help ="Set the amount of damage a platform takes while a player is standing on top of it." )]
+	public static float PlatformStandDamage { get; set; } = 25;
+
 	DebugOverlay l { get; set; }
 
 	/// <summary>
@@ -222,7 +226,7 @@ public partial class Pawn : AnimatedEntity, NamePlatePosition
 		{
 			var tr = Trace.Ray( new Ray( Position, Rotation.Down ), 20 )
 				.Ignore( this )
-				.Size(35)
+				.Size( 35 )
 				.Run();
 
 			var ent = tr.Entity;
@@ -233,7 +237,7 @@ public partial class Pawn : AnimatedEntity, NamePlatePosition
 
 			if ( !IsValidUseEntity( ent ) || !(ent is Platform) ) return;
 
-			spleefPlayerComponent.OnWalkOverPlatform( (Platform)ent, 25 * Time.Delta );
+			spleefPlayerComponent.OnWalkOverPlatform( (Platform)ent, PlatformStandDamage * Time.Delta );
 
 		}
 	}
