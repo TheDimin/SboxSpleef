@@ -14,7 +14,7 @@ namespace Spleef
 
 		public virtual void OnPlayerDied( IClient client )
 		{
-			StartSpectating( client );
+			SpleefGame.Instance.MakeSpectator( client);
 		}
 
 		public virtual void OnStateEnter()
@@ -37,14 +37,6 @@ namespace Spleef
 
 			pawn.Position = SpleefGame.SpawnPosition;
 
-		}
-
-		protected virtual void StartSpectating( IClient client )
-		{
-			client.Pawn?.Delete();
-			client.Pawn = null;
-
-			SpleefGame.Instance.MakeSpectator( client);
 		}
 		#endregion
 	}
