@@ -38,10 +38,8 @@ namespace Spleef
 
 		public override void OnKilled()
 		{
-			Log.Warning( "Onkilled called" );
 			if ( LifeState == LifeState.Alive )
 			{
-				Log.Warning( "Object was alive" );
 				if ( !Game.IsEditor )
 					Sandbox.Services.Stats.Increment( LastAttacker.Client, "platforms_destroyed_v2", 1 );
 
@@ -51,6 +49,7 @@ namespace Spleef
 				PhysicsBody.Enabled = false;
 			}
 		}
+
 		[SpleefEvent.OnGameReset]
 		public virtual void Respawn()
 		{
@@ -65,8 +64,6 @@ namespace Spleef
 		public override void TakeDamage( DamageInfo info )
 		{
 			base.TakeDamage( info );
-
-			Log.Warning( $"TakeDamage called HP:{Health} :: {info.Damage} :: {LifeState}" );
 		}
 
 		public virtual void StopInteraction( SpleefPlayerComponent playerComponent )

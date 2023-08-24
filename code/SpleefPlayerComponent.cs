@@ -1,5 +1,6 @@
 ﻿using Sandbox;
 using Sandbox.Component;
+using Sandbox.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -21,22 +22,33 @@ namespace Spleef
 
 		public static float CooldownAfterBlockDamaged { get; set; } = .000f;
 
-		public static float PlatformHitDamage { get; set; } = 100;
-
-		public virtual void ApplyDamageToPlatform( [NotNull] Platform platform )
+		public virtual void ApplyDamageToPlatform( [NotNull] Platform platform, float damage )
 		{
+			Game.AssertServer();
+
 			if ( !InteractCooldown ) return;
 
 			if ( !SpleefGame.CanDestroyBlocks ) return;
 
-			platform.TakeDamage( DamageInfo.Generic( PlatformHitDamage ).WithAttacker( Entity ) );
+			platform.TakeDamage( DamageInfo.Generic( damage ).WithAttacker( Entity ).WithTag( "Attack" ) );
 
 			LastDamagedPlatform = platform;
+
 			InteractCooldown = CooldownAfterBlockDamaged;
 		}
 
+		public virtual void OnWalkOverPlatform( [NotNull] Platform platform, float damage = 5 )
+		{
+			Game.AssertServer();
+
+			if ( !SpleefGame.CanDestroyBlocks ) return;
+
+			platform.TakeDamage( DamageInfo.Generic( damage ).WithAttacker( Entity ).WithTag( "Attack" ) );
+		}
+
+
 		[GameEvent.Tick.Server]
-		void DeathCheck()
+		protected virtual void DeathCheck()
 		{
 			if ( Entity.Position.z < SpleefGame.KillZoneHeight )
 			{

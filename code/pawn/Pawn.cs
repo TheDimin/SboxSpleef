@@ -1,5 +1,4 @@
 ﻿using Sandbox;
-using Sandbox.Component;
 using Sandbox.Internal.Globals;
 using System.ComponentModel;
 
@@ -20,6 +19,10 @@ public partial class Pawn : AnimatedEntity, NamePlatePosition
 
 	[ConVar.Replicated( "spleef_Pawn_InteractionDistance" )]
 	static float interactionDistance { get; set; } = 280;
+	[ConVar.Replicated( "spleef_Pawn_PlatformInteractDamage" )]
+	public static float PlatformHitDamage { get; set; } = 100;
+
+	DebugOverlay l { get; set; }
 
 	/// <summary>
 	/// Position a player should be looking from in world space.
@@ -119,12 +122,12 @@ public partial class Pawn : AnimatedEntity, NamePlatePosition
 		Animator?.Simulate();
 		EyeLocalPosition = Vector3.Up * (64f * Scale);
 		TickPlayerUse();
+		OnWalk();
 	}
 
 	public override void BuildInput()
 	{
 		InputDirection = Input.AnalogMove;
-
 
 		if ( Input.StopProcessing )
 			return;
@@ -204,8 +207,34 @@ public partial class Pawn : AnimatedEntity, NamePlatePosition
 
 				if ( !(Using is Platform) ) return;
 
-				spleefPlayerComponent.ApplyDamageToPlatform( (Platform)Using );
+				spleefPlayerComponent.ApplyDamageToPlatform( (Platform)Using, PlatformHitDamage );
 			}
+		}
+	}
+
+	public virtual void OnWalk()
+	{
+		// This is serverside only
+		if ( !Game.IsServer ) return;
+
+
+		using ( Prediction.Off() )
+		{
+			var tr = Trace.Ray( new Ray( Position, Rotation.Down ), 20 )
+				.Ignore( this )
+				.Size(35)
+				.Run();
+
+			var ent = tr.Entity;
+			while ( ent.IsValid() && !IsValidUseEntity( ent ) )
+			{
+				ent = ent.Parent;
+			}
+
+			if ( !IsValidUseEntity( ent ) || !(ent is Platform) ) return;
+
+			spleefPlayerComponent.OnWalkOverPlatform( (Platform)ent, 25 * Time.Delta );
+
 		}
 	}
 
@@ -220,7 +249,7 @@ public partial class Pawn : AnimatedEntity, NamePlatePosition
 
 		return true;
 	}
-	DebugOverlay l { get; set; }
+
 
 
 	/// <summary>
@@ -243,23 +272,6 @@ public partial class Pawn : AnimatedEntity, NamePlatePosition
 			ent = ent.Parent;
 		}
 
-		// Nothing found, try a wider search
-		if ( !IsValidUseEntity( ent ) )
-		{
-			tr = Trace.Ray( EyePosition, EyePosition + EyeRotation.Forward * 85 )
-			.Radius( 2 )
-			.Ignore( this )
-			.Run();
-
-			// See if any of the parent entities are usable if we ain't.
-			ent = tr.Entity;
-			while ( ent.IsValid() && !IsValidUseEntity( ent ) )
-			{
-				ent = ent.Parent;
-			}
-		}
-
-		// Still no good? Bail.
 		if ( !IsValidUseEntity( ent ) ) return null;
 
 		return ent;
